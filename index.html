@@ -61,7 +61,7 @@
                     <i data-lucide="cloud-check" class="w-3 h-3"></i>
                     <span>Synced</span>
                 </div>
-                <button onclick="window.addRow()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-black transition flex items-center gap-2 shadow-lg active:scale-95">
+                <button id="add-row-btn" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-black transition flex items-center gap-2 shadow-lg active:scale-95">
                     <i data-lucide="plus" class="w-4 h-4"></i> Add Row
                 </button>
             </div>
@@ -71,41 +71,41 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-0 border-collapse">
             <div class="header-box p-3 space-y-2 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">System / Product / Process</label>
-                <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-system" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">FMEA ID</label>
-                <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-id" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Revision</label>
-                <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-rev" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Date</label>
-                <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="date" id="meta-date" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             
             <div class="header-box p-3 space-y-2 border-t-0 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Subsystem / Product / Process</label>
-                <input type="text" id="meta-subsystem" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-subsystem" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2 border-t-0 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Party Responsible</label>
-                <input type="text" id="meta-party" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-party" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2 border-t-0 border-r-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Approved By</label>
-                <input type="text" id="meta-approved" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="text" id="meta-approved" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
             <div class="header-box p-3 space-y-2 border-t-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Date Completed</label>
-                <input type="date" id="meta-comp-date" onchange="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+                <input type="date" id="meta-comp-date" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
             </div>
 
             <div class="header-box p-3 col-span-4 border-t-0">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase">Team Members</label>
-                <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold" placeholder="List team members here...">
+                <input type="text" id="meta-team" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold" placeholder="List team members here...">
             </div>
         </div>
 
@@ -178,11 +178,6 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-worksheet';
 
         // --- Application State ---
-        let state = {
-            metadata: {},
-            rows: []
-        };
-
         const createEmptyRow = () => ({
             id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
             step: '', func: '', mode: '', effects: '', s: 1, causes: '', o: 1, controls: '', d: 1,
@@ -190,150 +185,35 @@
             status: 'Not Started', actionResults: '', dateComp: '', resS: 1, resO: 1, resD: 1
         });
 
-        // --- Core Functions ---
-        async function init() {
-            lucide.createIcons();
-
-            // Authentication Rule 3
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) { console.error("Authentication Error:", e); }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    subscribeToData();
-                } else {
-                    // Fallback for local testing
-                    if (state.rows.length === 0) {
-                        state.rows = [createEmptyRow()];
-                        render();
-                    }
-                }
-            });
-        }
-
-        function subscribeToData() {
-            // Rule 1 Pathing: artifacts/{id}/public/data/state/fmea
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), (snap) => {
-                if (snap.exists()) {
-                    state = snap.data();
-                    if (!state.rows || state.rows.length === 0) {
-                        state.rows = [createEmptyRow()];
-                    }
-                    render();
-                } else {
-                    // Initialize empty state if document doesn't exist
-                    state = { metadata: {}, rows: [createEmptyRow()] };
-                    render();
-                }
-            }, (err) => {
-                console.error("Firebase Sync Error:", err);
-                // Even on error, show current state
-                if (state.rows.length === 0) {
-                    state.rows = [createEmptyRow()];
-                }
-                render();
-            });
-        }
-
-        async function save() {
-            if (!auth.currentUser) return;
-            const syncEl = document.getElementById('sync-indicator');
-            if (syncEl) {
-                syncEl.classList.replace('bg-emerald-100', 'bg-amber-100');
-                syncEl.classList.replace('text-emerald-700', 'text-amber-700');
-                syncEl.querySelector('span').innerText = 'Syncing...';
-            }
-
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), state);
-                if (syncEl) {
-                    syncEl.classList.replace('bg-amber-100', 'bg-emerald-100');
-                    syncEl.classList.replace('text-amber-700', 'text-emerald-700');
-                    syncEl.querySelector('span').innerText = 'Synced';
-                }
-            } catch (e) { console.error("Cloud Save Failed:", e); }
-        }
-
-        // --- Event Handlers (Attached to window for global scope) ---
-        window.updateMeta = () => {
-            state.metadata = {
-                system: document.getElementById('meta-system').value,
-                id: document.getElementById('meta-id').value,
-                rev: document.getElementById('meta-rev').value,
-                date: document.getElementById('meta-date').value,
-                subsystem: document.getElementById('meta-subsystem').value,
-                party: document.getElementById('meta-party').value,
-                approved: document.getElementById('meta-approved').value,
-                compDate: document.getElementById('meta-comp-date').value,
-                team: document.getElementById('meta-team').value
-            };
-            save();
+        let state = {
+            metadata: {},
+            rows: [createEmptyRow()]
         };
 
-        window.addRow = () => {
-            state.rows.push(createEmptyRow());
-            render(); // Immediate UI update
-            save();
-        };
-
-        window.deleteRow = (id) => {
-            if (state.rows.length <= 1) {
-                state.rows = [createEmptyRow()];
-            } else {
-                state.rows = state.rows.filter(r => r.id !== id);
-            }
-            render();
-            save();
-        };
-
-        window.updateRowVal = (id, field, val) => {
-            const row = state.rows.find(r => r.id === id);
-            if (!row) return;
-            row[field] = val;
-            
-            // Recalculate RPNs
-            if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) {
-                const rpn1 = (row.s || 1) * (row.o || 1) * (row.d || 1);
-                const rpn2 = (row.resS || 1) * (row.resO || 1) * (row.resD || 1);
-                const rpn1El = document.getElementById(`rpn1-${id}`);
-                const rpn2El = document.getElementById(`rpn2-${id}`);
-                if (rpn1El) rpn1El.innerText = rpn1;
-                if (rpn2El) rpn2El.innerText = rpn2;
-            }
-            
-            save();
-            // Re-render if status or score changes for color logic
-            if (field === 'status' || ['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) {
-                render();
-            }
-        };
-
-        // --- Rendering Engine ---
+        // --- Core Rendering Functions ---
         function render() {
+            // Render Metadata Fields
             const m = state.metadata || {};
-            const setVal = (id, val) => {
+            const metaIds = [
+                ['meta-system', m.system], ['meta-id', m.id], ['meta-rev', m.rev], 
+                ['meta-date', m.date], ['meta-subsystem', m.subsystem], 
+                ['meta-party', m.party], ['meta-approved', m.approved], 
+                ['meta-comp-date', m.compDate], ['meta-team', m.team]
+            ];
+            metaIds.forEach(([id, val]) => {
                 const el = document.getElementById(id);
                 if (el) el.value = val || '';
-            };
-            setVal('meta-system', m.system);
-            setVal('meta-id', m.id);
-            setVal('meta-rev', m.rev);
-            setVal('meta-date', m.date);
-            setVal('meta-subsystem', m.subsystem);
-            setVal('meta-party', m.party);
-            setVal('meta-approved', m.approved);
-            setVal('meta-comp-date', m.compDate);
-            setVal('meta-team', m.team);
+            });
 
+            // Render Table Rows
             const container = document.getElementById('fmea-rows');
             if (!container) return;
             container.innerHTML = '';
             
+            if (!state.rows || state.rows.length === 0) {
+                state.rows = [createEmptyRow()];
+            }
+
             state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-slate-200 hover:bg-slate-50 transition-colors";
@@ -341,7 +221,7 @@
                 const getRatingSelect = (field, val) => {
                     let options = '';
                     for(let i=1; i<=10; i++) options += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
-                    return `<select class="rating-${val}" onchange="window.updateRowVal('${row.id}', '${field}', parseInt(this.value))">${options}</select>`;
+                    return `<select class="rating-${val}" data-id="${row.id}" data-field="${field}">${options}</select>`;
                 };
 
                 const statusOptions = [
@@ -358,42 +238,155 @@
 
                 tr.innerHTML = `
                     <td class="text-center font-bold text-slate-400 border-r">${idx + 1}</td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step || ''}</textarea></td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="step">${row.step || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="func">${row.func || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="mode">${row.mode || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="effects">${row.effects || ''}</textarea></td>
                     <td class="border-r">${getRatingSelect('s', row.s)}</td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="causes">${row.causes || ''}</textarea></td>
                     <td class="border-r">${getRatingSelect('o', row.o)}</td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="controls">${row.controls || ''}</textarea></td>
                     <td class="border-r">${getRatingSelect('d', row.d)}</td>
                     <td class="rpn-col border-r" id="rpn1-${row.id}">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'recActions', this.value)" class="text-blue-700 font-medium">${row.recActions || ''}</textarea></td>
-                    <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)" class="w-full text-[10px] h-full focus:outline-none"></td>
+                    <td class="border-r"><textarea class="row-input text-blue-700 font-medium" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
+                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="owner">${row.owner || ''}</textarea></td>
+                    <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" class="row-input w-full text-[10px] h-full focus:outline-none" data-id="${row.id}" data-field="dateDue"></td>
                     
                     <td class="border-r bg-blue-50/20 p-2">
-                        <select class="${currentStatusClass} !h-[30px] !min-h-0 text-[10px] mb-1 uppercase rounded px-2" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
+                        <select class="${currentStatusClass} !h-[30px] !min-h-0 text-[10px] mb-1 uppercase rounded px-2 row-input" data-id="${row.id}" data-field="status">
                             ${statusOptions.map(o => `<option value="${o.label}" ${row.status === o.label ? 'selected' : ''}>${o.label}</option>`).join('')}
                         </select>
-                        <textarea oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)" class="!min-h-[30px]">${row.actionResults || ''}</textarea>
+                        <textarea class="row-input !min-h-[30px]" data-id="${row.id}" data-field="actionResults">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="border-r bg-blue-50/20 px-2"><input type="date" value="${row.dateComp || ''}" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)" class="w-full text-[10px] h-full focus:outline-none"></td>
+                    <td class="border-r bg-blue-50/20 px-2"><input type="date" value="${row.dateComp || ''}" class="row-input w-full text-[10px] h-full focus:outline-none" data-id="${row.id}" data-field="dateComp"></td>
                     <td class="border-r">${getRatingSelect('resS', row.resS)}</td>
                     <td class="border-r">${getRatingSelect('resO', row.resO)}</td>
                     <td class="border-r">${getRatingSelect('resD', row.resD)}</td>
                     <td class="rpn-col bg-blue-200/50" id="rpn2-${row.id}">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
                     <td class="px-2 text-center">
-                        <button onclick="window.deleteRow('${row.id}')" class="text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button class="delete-row-btn text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded" data-id="${row.id}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                     </td>
                 `;
                 container.appendChild(tr);
             });
+            
+            // Re-attach listeners to dynamic elements
+            attachRowListeners();
             lucide.createIcons();
         }
 
-        // --- Start Application ---
+        // --- Data Logic ---
+        async function save() {
+            if (!auth.currentUser) return;
+            const syncEl = document.getElementById('sync-indicator');
+            if (syncEl) {
+                syncEl.classList.replace('bg-emerald-100', 'bg-amber-100');
+                syncEl.classList.replace('text-emerald-700', 'text-amber-700');
+                syncEl.querySelector('span').innerText = 'Syncing...';
+            }
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), state);
+                if (syncEl) {
+                    syncEl.classList.replace('bg-amber-100', 'bg-emerald-100');
+                    syncEl.classList.replace('text-amber-700', 'text-emerald-700');
+                    syncEl.querySelector('span').innerText = 'Synced';
+                }
+            } catch (e) { console.error("Cloud Save Failed:", e); }
+        }
+
+        function updateStateVal(id, field, val) {
+            const row = state.rows.find(r => r.id === id);
+            if (!row) return;
+            row[field] = val;
+            if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) {
+                render(); // Re-render for color/calculation logic
+            }
+            save();
+        }
+
+        function attachRowListeners() {
+            document.querySelectorAll('.row-input, select').forEach(el => {
+                const id = el.dataset.id;
+                const field = el.dataset.field;
+                if (!id || !field) return;
+
+                const eventType = el.tagName === 'TEXTAREA' ? 'input' : 'change';
+                el.addEventListener(eventType, (e) => {
+                    let val = e.target.value;
+                    if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) {
+                        val = parseInt(val) || 1;
+                    }
+                    updateStateVal(id, field, val);
+                });
+            });
+
+            document.querySelectorAll('.delete-row-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    if (state.rows.length <= 1) {
+                        state.rows = [createEmptyRow()];
+                    } else {
+                        state.rows = state.rows.filter(r => r.id !== id);
+                    }
+                    render();
+                    save();
+                });
+            });
+        }
+
+        // --- Setup Metadata Listeners ---
+        const metaInputIds = [
+            'meta-system', 'meta-id', 'meta-rev', 'meta-date', 
+            'meta-subsystem', 'meta-party', 'meta-approved', 
+            'meta-comp-date', 'meta-team'
+        ];
+        metaInputIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    state.metadata[id.replace('meta-', '')] = el.value;
+                    save();
+                });
+            }
+        });
+
+        // --- Setup Main Add Row Button ---
+        const addRowBtn = document.getElementById('add-row-btn');
+        if (addRowBtn) {
+            addRowBtn.addEventListener('click', () => {
+                state.rows.push(createEmptyRow());
+                render();
+                save();
+            });
+        }
+
+        // --- Initialization ---
+        async function init() {
+            render(); // Initial empty render
+            
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) { console.error("Auth Failed:", e); }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), (snap) => {
+                        if (snap.exists()) {
+                            state = snap.data();
+                            render();
+                        }
+                    });
+                }
+            });
+        }
+
         init();
     </script>
 </body>
