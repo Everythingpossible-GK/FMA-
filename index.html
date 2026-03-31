@@ -13,7 +13,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* We handle scrolling inside the app shell */
+            overflow: hidden;
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9;
         }
@@ -25,12 +25,12 @@
             width: 100vw;
         }
 
-        /* Table Styling */
+        /* Essential Table Styling */
         .fmea-table {
             border-collapse: collapse;
             background: white;
             table-layout: fixed;
-            min-width: 2400px; /* Essential for wide FMEA columns */
+            min-width: 2400px;
         }
 
         .fmea-table th { 
@@ -49,14 +49,13 @@
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
-            height: 80px; /* Forced height to ensure visibility */
+            height: 85px; /* Forced height to guarantee visibility */
             vertical-align: top;
         }
         
         textarea { 
             width: 100%; 
             height: 100%; 
-            min-height: 80px; 
             padding: 10px; 
             font-size: 12px; 
             background: transparent; 
@@ -65,11 +64,12 @@
             outline: none; 
             display: block;
             line-height: 1.5;
+            overflow: hidden;
         }
         
         textarea:focus { background: #f8fafc; }
         
-        /* Dropdown Colors */
+        /* Color Mapping */
         select { 
             background: transparent; 
             font-weight: 800; 
@@ -77,7 +77,7 @@
             outline: none; 
             width: 100%; 
             text-align: center; 
-            height: 80px; 
+            height: 85px; 
             border: none; 
             appearance: none; 
             font-size: 14px;
@@ -102,17 +102,18 @@
         .status-overdue { background-color: #63b3ed; color: #ffffff; }
         .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
 
-        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; }
+        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; line-height: 85px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background: #1a5276 !important; color: white !important; }
 
-        /* Scroller Fix */
+        /* Force visibility on small screens */
         .table-viewport {
             flex: 1;
             overflow: auto;
             width: 100%;
             background: #cbd5e1;
-            min-height: 300px; /* Forced minimum to prevent collapse */
+            min-height: 250px;
+            border-top: 2px solid #94a3b8;
         }
 
         ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -124,61 +125,61 @@
 
     <div class="app-container">
         <!-- Top Toolbar -->
-        <header class="h-14 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-50">
-            <div class="flex items-center gap-3">
+        <header class="h-12 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100]">
+            <div class="flex items-center gap-2">
                 <i data-lucide="table-properties" class="text-blue-500 w-5 h-5"></i>
-                <h1 class="text-sm font-black uppercase tracking-tighter">FMEA SPREADSHEET PRO</h1>
+                <h1 class="text-xs font-black uppercase tracking-tight">FMEA SPREADSHEET PRO</h1>
             </div>
             <div class="flex items-center gap-4">
-                <div id="sync-status" class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2">
-                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-slate-600"></span>
-                    <span id="sync-text">Local Mode</span>
+                <div id="sync-status" class="text-[9px] font-bold text-slate-400 uppercase flex items-center gap-2">
+                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="sync-text">Live Mode</span>
                 </div>
-                <button id="btn-add-row" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-lg font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-blue-900/40">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Entry Row
+                <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded font-black text-[10px] uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
+                    <i data-lucide="plus-circle" class="w-3 h-3"></i> Add Row
                 </button>
             </div>
         </header>
 
-        <!-- Compact Metadata -->
+        <!-- Compact Info Panel -->
         <div class="bg-white border-b border-slate-300 p-2 shrink-0">
             <div class="grid grid-cols-4 gap-1">
-                <div class="header-box p-1.5 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">System / Process</label>
-                    <input type="text" id="meta-system" class="w-full bg-transparent border-b border-slate-400 text-xs font-bold outline-none">
+                <div class="header-box p-1 rounded">
+                    <label class="block text-[7px] font-black text-slate-500 uppercase">System</label>
+                    <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
                 </div>
-                <div class="header-box p-1.5 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">FMEA ID</label>
-                    <input type="text" id="meta-id" class="w-full bg-transparent border-b border-slate-400 text-xs font-bold outline-none">
+                <div class="header-box p-1 rounded">
+                    <label class="block text-[7px] font-black text-slate-500 uppercase">FMEA ID</label>
+                    <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
                 </div>
-                <div class="header-box p-1.5 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">Revision</label>
-                    <input type="text" id="meta-rev" class="w-full bg-transparent border-b border-slate-400 text-xs font-bold outline-none">
+                <div class="header-box p-1 rounded">
+                    <label class="block text-[7px] font-black text-slate-500 uppercase">Revision</label>
+                    <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
                 </div>
-                <div class="header-box p-1.5 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">Date</label>
-                    <input type="date" id="meta-date" class="w-full bg-transparent border-b border-slate-400 text-xs font-bold outline-none">
+                <div class="header-box p-1 rounded">
+                    <label class="block text-[7px] font-black text-slate-500 uppercase">Date</label>
+                    <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
                 </div>
             </div>
         </div>
 
-        <!-- Scrollable Table -->
-        <div class="table-viewport">
+        <!-- Scrollable Table Area -->
+        <div class="table-viewport" id="viewport">
             <table class="fmea-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px">#</th>
+                        <th style="width: 45px">#</th>
                         <th style="width: 250px">Item / Step</th>
                         <th style="width: 250px">Function</th>
-                        <th style="width: 300px">Potential Failure Mode</th>
-                        <th style="width: 300px">Failure Effects</th>
+                        <th style="width: 300px">Failure Mode</th>
+                        <th style="width: 300px">Effects</th>
                         <th style="width: 70px">S</th>
-                        <th style="width: 300px">Potential Causes</th>
+                        <th style="width: 300px">Causes</th>
                         <th style="width: 70px">O</th>
-                        <th style="width: 300px">Current Controls</th>
+                        <th style="width: 300px">Controls</th>
                         <th style="width: 70px">D</th>
                         <th style="width: 80px">RPN</th>
-                        <th style="width: 300px">Required Actions</th>
+                        <th style="width: 300px">Recommended Actions</th>
                         <th style="width: 200px">Owner</th>
                         <th style="width: 150px">Due Date</th>
                         <th style="width: 250px" class="results-header">Action Result / Status</th>
@@ -186,31 +187,28 @@
                         <th style="width: 70px" class="results-header">S</th>
                         <th style="width: 70px" class="results-header">O</th>
                         <th style="width: 70px" class="results-header">D</th>
-                        <th style="width: 80px" class="results-header">New RPN</th>
+                        <th style="width: 80px" class="results-header">RPN</th>
                         <th style="width: 60px"></th>
                     </tr>
                 </thead>
                 <tbody id="fmea-body">
-                    <!-- Rows will be injected here -->
+                    <!-- Rows will appear here -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // Initialize Firebase services
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v4';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v5';
 
-        // Initial state logic
         const createRow = () => ({
             id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5),
             step: '', func: '', mode: '', effects: '', s: 1, causes: '', o: 1, controls: '', d: 1,
@@ -218,31 +216,29 @@
             status: 'Not Started', actionResults: '', dateComp: '', resS: 1, resO: 1, resD: 1
         });
 
-        let state = {
+        window.state = {
             metadata: {},
             rows: [createRow()]
         };
 
-        // UI Update Logic
-        function render() {
+        window.render = function() {
             const container = document.getElementById('fmea-body');
             if (!container) return;
             container.innerHTML = '';
 
-            // Ensure rows always exist
-            if (!state.rows || state.rows.length === 0) {
-                state.rows = [createRow()];
+            if (!window.state.rows || window.state.rows.length === 0) {
+                window.state.rows = [createRow()];
             }
 
-            state.rows.forEach((row, idx) => {
+            window.state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 
                 const getRatingSelect = (field, val) => {
-                    let options = '';
+                    let opts = '';
                     for (let i = 1; i <= 10; i++) {
-                        options += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
+                        opts += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
                     }
-                    return `<select class="rating-${val}" data-id="${row.id}" data-field="${field}">${options}</select>`;
+                    return `<select class="rating-${val}" onchange="window.updateRowVal('${row.id}', '${field}', parseInt(this.value))">${opts}</select>`;
                 };
 
                 const statusOptions = ['Not Started', 'In Progress', 'Complete', 'Needs Review', 'Approved', 'Overdue', 'On Hold'];
@@ -250,34 +246,34 @@
 
                 tr.innerHTML = `
                     <td class="bg-slate-50 text-center font-black text-slate-300 text-xs border-r">${idx + 1}</td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="step">${row.step || ''}</textarea></td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="func">${row.func || ''}</textarea></td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="mode">${row.mode || ''}</textarea></td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="effects">${row.effects || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects || ''}</textarea></td>
                     <td>${getRatingSelect('s', row.s)}</td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="causes">${row.causes || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes || ''}</textarea></td>
                     <td>${getRatingSelect('o', row.o)}</td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="controls">${row.controls || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
                     <td>${getRatingSelect('d', row.d)}</td>
                     <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
-                    <td><textarea class="edit-cell font-bold text-blue-700" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
-                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="owner">${row.owner || ''}</textarea></td>
-                    <td class="px-2"><input type="date" value="${row.dateDue || ''}" class="edit-cell w-full text-[10px]" data-id="${row.id}" data-field="dateDue"></td>
+                    <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
+                    <td class="px-1"><input type="date" value="${row.dateDue || ''}" class="w-full text-[10px] mt-4" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
                     
                     <td class="bg-blue-50/10 p-2">
-                        <select class="${statusClass} !h-6 !min-h-0 text-[10px] mb-1 uppercase rounded-md edit-cell" data-id="${row.id}" data-field="status">
+                        <select class="${statusClass} !h-6 !min-h-0 text-[10px] mb-1 uppercase rounded edit-cell" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
                             ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
-                        <textarea class="edit-cell !min-h-[40px] !p-1 !text-[11px]" data-id="${row.id}" data-field="actionResults">${row.actionResults || ''}</textarea>
+                        <textarea class="!min-h-[40px] !p-1 !text-[11px]" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="bg-blue-50/10 px-2"><input type="date" value="${row.dateComp || ''}" class="edit-cell w-full text-[10px]" data-id="${row.id}" data-field="dateComp"></td>
+                    <td class="bg-blue-50/10 px-1"><input type="date" value="${row.dateComp || ''}" class="w-full text-[10px] mt-4" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
                     <td>${getRatingSelect('resS', row.resS)}</td>
                     <td>${getRatingSelect('resO', row.resO)}</td>
                     <td>${getRatingSelect('resD', row.resD)}</td>
                     <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
                     <td class="text-center bg-slate-50">
-                        <button class="btn-delete p-2 text-slate-300 hover:text-red-500 transition-colors" data-id="${row.id}">
+                        <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -285,98 +281,75 @@
                 container.appendChild(tr);
             });
             
-            lucide.createIcons();
-            rebindListeners();
-        }
+            if (window.lucide) window.lucide.createIcons();
+        };
 
-        async function sync() {
+        window.save = async function() {
             if (!auth.currentUser) return;
-            const dot = document.getElementById('sync-dot');
-            const txt = document.getElementById('sync-text');
-            dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
-            txt.innerText = 'Syncing...';
-            
+            document.getElementById('sync-text').innerText = 'Saving...';
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), state);
-                dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-                txt.innerText = 'Synced';
-            } catch (e) {
-                console.error(e);
-                txt.innerText = 'Sync Error';
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
+                document.getElementById('sync-text').innerText = 'Synced';
+            } catch (e) { document.getElementById('sync-text').innerText = 'Local Mode'; }
+        };
+
+        window.addRow = function() {
+            window.state.rows.push(createRow());
+            window.render();
+            window.save();
+            const vp = document.getElementById('viewport');
+            vp.scrollTop = vp.scrollHeight;
+        };
+
+        window.deleteRow = function(id) {
+            window.state.rows = window.state.rows.filter(r => r.id !== id);
+            window.render();
+            window.save();
+        };
+
+        window.updateRowVal = function(id, field, val) {
+            const row = window.state.rows.find(r => r.id === id);
+            if (!row) return;
+            row[field] = val;
+            if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) window.render();
+            window.save();
+        };
+
+        window.updateMeta = function() {
+            window.state.metadata = {
+                system: document.getElementById('meta-system').value,
+                id: document.getElementById('meta-id').value,
+                rev: document.getElementById('meta-rev').value,
+                date: document.getElementById('meta-date').value
+            };
+            window.save();
+        };
+
+        // Execution Start
+        window.render(); // Immediate
+
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
             }
-        }
+        } catch (e) {}
 
-        function rebindListeners() {
-            // Table inputs
-            document.querySelectorAll('.edit-cell, select[data-id]').forEach(el => {
-                const id = el.dataset.id;
-                const field = el.dataset.field;
-                el.oninput = el.onchange = (e) => {
-                    const row = state.rows.find(r => r.id === id);
-                    if (!row) return;
-                    let val = e.target.value;
-                    if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) val = parseInt(val) || 1;
-                    row[field] = val;
-                    if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) render();
-                    sync();
-                };
-            });
-
-            // Delete buttons
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = () => {
-                    state.rows = state.rows.filter(r => r.id !== btn.dataset.id);
-                    render();
-                    sync();
-                };
-            });
-        }
-
-        // Global Event Setup
-        document.getElementById('btn-add-row').addEventListener('click', () => {
-            state.rows.push(createRow());
-            render();
-            sync();
-            const viewport = document.querySelector('.table-viewport');
-            viewport.scrollTop = viewport.scrollHeight;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), (snap) => {
+                    if (snap.exists()) {
+                        window.state = snap.data();
+                        window.render();
+                        Object.entries(window.state.metadata || {}).forEach(([k, v]) => {
+                            const el = document.getElementById('meta-' + k);
+                            if (el) el.value = v;
+                        });
+                    }
+                });
+            }
         });
-
-        ['system', 'id', 'rev', 'date'].forEach(field => {
-            document.getElementById('meta-' + field).addEventListener('input', (e) => {
-                state.metadata[field] = e.target.value;
-                sync();
-            });
-        });
-
-        // App Start
-        async function start() {
-            render(); // Immediate local render
-
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) { console.error("Auth Failure", e); }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), (snap) => {
-                        if (snap.exists()) {
-                            state = snap.data();
-                            render();
-                            Object.entries(state.metadata || {}).forEach(([k, v]) => {
-                                const el = document.getElementById('meta-' + k);
-                                if (el) el.value = v;
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        start();
     </script>
 </body>
 </html>
