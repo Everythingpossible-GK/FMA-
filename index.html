@@ -13,24 +13,22 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9;
         }
 
-        .app-container {
+        .app-shell {
             display: flex;
             flex-direction: column;
             height: 100vh;
             width: 100vw;
         }
 
-        /* Essential Table Styling */
+        /* Table Styling */
         .fmea-table {
             border-collapse: collapse;
             background: white;
-            table-layout: fixed;
-            min-width: 2400px;
+            min-width: 2400px; /* Forces horizontal scroll for FMEA width */
         }
 
         .fmea-table th { 
@@ -49,7 +47,7 @@
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
-            height: 85px; /* Forced height to guarantee visibility */
+            height: 80px; 
             vertical-align: top;
         }
         
@@ -64,12 +62,11 @@
             outline: none; 
             display: block;
             line-height: 1.5;
-            overflow: hidden;
         }
         
         textarea:focus { background: #f8fafc; }
         
-        /* Color Mapping */
+        /* Dropdown Colors */
         select { 
             background: transparent; 
             font-weight: 800; 
@@ -77,7 +74,7 @@
             outline: none; 
             width: 100%; 
             text-align: center; 
-            height: 85px; 
+            height: 80px; 
             border: none; 
             appearance: none; 
             font-size: 14px;
@@ -102,18 +99,16 @@
         .status-overdue { background-color: #63b3ed; color: #ffffff; }
         .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
 
-        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; line-height: 85px; }
+        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; line-height: 80px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background: #1a5276 !important; color: white !important; }
 
-        /* Force visibility on small screens */
         .table-viewport {
             flex: 1;
             overflow: auto;
             width: 100%;
             background: #cbd5e1;
-            min-height: 250px;
-            border-top: 2px solid #94a3b8;
+            min-height: 400px; /* Ensure space for rows is NEVER zero */
         }
 
         ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -123,17 +118,17 @@
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-shell">
         <!-- Top Toolbar -->
-        <header class="h-12 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100]">
-            <div class="flex items-center gap-2">
-                <i data-lucide="table-properties" class="text-blue-500 w-5 h-5"></i>
+        <header class="h-12 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0">
+            <div class="flex items-center gap-3">
+                <i data-lucide="shield-alert" class="text-blue-500 w-5 h-5"></i>
                 <h1 class="text-xs font-black uppercase tracking-tight">FMEA SPREADSHEET PRO</h1>
             </div>
             <div class="flex items-center gap-4">
                 <div id="sync-status" class="text-[9px] font-bold text-slate-400 uppercase flex items-center gap-2">
                     <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span id="sync-text">Live Mode</span>
+                    <span id="sync-text">System Active</span>
                 </div>
                 <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded font-black text-[10px] uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
                     <i data-lucide="plus-circle" class="w-3 h-3"></i> Add Row
@@ -141,7 +136,7 @@
             </div>
         </header>
 
-        <!-- Compact Info Panel -->
+        <!-- Metadata Section -->
         <div class="bg-white border-b border-slate-300 p-2 shrink-0">
             <div class="grid grid-cols-4 gap-1">
                 <div class="header-box p-1 rounded">
@@ -163,7 +158,7 @@
             </div>
         </div>
 
-        <!-- Scrollable Table Area -->
+        <!-- Table Viewport -->
         <div class="table-viewport" id="viewport">
             <table class="fmea-table">
                 <thead>
@@ -171,7 +166,7 @@
                         <th style="width: 45px">#</th>
                         <th style="width: 250px">Item / Step</th>
                         <th style="width: 250px">Function</th>
-                        <th style="width: 300px">Failure Mode</th>
+                        <th style="width: 300px">Potential Failure Mode</th>
                         <th style="width: 300px">Effects</th>
                         <th style="width: 70px">S</th>
                         <th style="width: 300px">Causes</th>
@@ -179,7 +174,7 @@
                         <th style="width: 300px">Controls</th>
                         <th style="width: 70px">D</th>
                         <th style="width: 80px">RPN</th>
-                        <th style="width: 300px">Recommended Actions</th>
+                        <th style="width: 300px">Actions</th>
                         <th style="width: 200px">Owner</th>
                         <th style="width: 150px">Due Date</th>
                         <th style="width: 250px" class="results-header">Action Result / Status</th>
@@ -192,24 +187,16 @@
                     </tr>
                 </thead>
                 <tbody id="fmea-body">
-                    <!-- Rows will appear here -->
+                    <!-- JavaScript will fill this -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v5';
-
-        const createRow = () => ({
+    <!-- Core Script Logic (NOT MODULE) -->
+    <script>
+        // Setup initial local state
+        const createRowObj = () => ({
             id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5),
             step: '', func: '', mode: '', effects: '', s: 1, causes: '', o: 1, controls: '', d: 1,
             recActions: '', owner: '', dateDue: '',
@@ -218,22 +205,19 @@
 
         window.state = {
             metadata: {},
-            rows: [createRow()]
+            rows: [createRowObj()] // Guarantee one row exists immediately
         };
 
+        // Guaranteed render function
         window.render = function() {
             const container = document.getElementById('fmea-body');
             if (!container) return;
             container.innerHTML = '';
 
-            if (!window.state.rows || window.state.rows.length === 0) {
-                window.state.rows = [createRow()];
-            }
-
             window.state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 
-                const getRatingSelect = (field, val) => {
+                const getSelectHTML = (field, val) => {
                     let opts = '';
                     for (let i = 1; i <= 10; i++) {
                         opts += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
@@ -250,30 +234,30 @@
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects || ''}</textarea></td>
-                    <td>${getRatingSelect('s', row.s)}</td>
+                    <td>${getSelectHTML('s', row.s)}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes || ''}</textarea></td>
-                    <td>${getRatingSelect('o', row.o)}</td>
+                    <td>${getSelectHTML('o', row.o)}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
-                    <td>${getRatingSelect('d', row.d)}</td>
+                    <td>${getSelectHTML('d', row.d)}</td>
                     <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
                     <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    <td class="px-1"><input type="date" value="${row.dateDue || ''}" class="w-full text-[10px] mt-4" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
+                    <td class="px-1 pt-4"><input type="date" value="${row.dateDue || ''}" class="w-full text-[10px]" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
                     
                     <td class="bg-blue-50/10 p-2">
-                        <select class="${statusClass} !h-6 !min-h-0 text-[10px] mb-1 uppercase rounded edit-cell" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
+                        <select class="${statusClass} !h-6 !min-h-0 text-[10px] mb-1 uppercase rounded" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
                             ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
                         <textarea class="!min-h-[40px] !p-1 !text-[11px]" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="bg-blue-50/10 px-1"><input type="date" value="${row.dateComp || ''}" class="w-full text-[10px] mt-4" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
-                    <td>${getRatingSelect('resS', row.resS)}</td>
-                    <td>${getRatingSelect('resO', row.resO)}</td>
-                    <td>${getRatingSelect('resD', row.resD)}</td>
+                    <td class="bg-blue-50/10 px-1 pt-4"><input type="date" value="${row.dateComp || ''}" class="w-full text-[10px]" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
+                    <td>${getSelectHTML('resS', row.resS)}</td>
+                    <td>${getSelectHTML('resO', row.resO)}</td>
+                    <td>${getSelectHTML('resD', row.resD)}</td>
                     <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
-                    <td class="text-center bg-slate-50">
-                        <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                    <td class="text-center bg-slate-50 pt-4">
+                        <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -284,27 +268,19 @@
             if (window.lucide) window.lucide.createIcons();
         };
 
-        window.save = async function() {
-            if (!auth.currentUser) return;
-            document.getElementById('sync-text').innerText = 'Saving...';
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
-                document.getElementById('sync-text').innerText = 'Synced';
-            } catch (e) { document.getElementById('sync-text').innerText = 'Local Mode'; }
-        };
-
         window.addRow = function() {
-            window.state.rows.push(createRow());
+            window.state.rows.push(createRowObj());
             window.render();
-            window.save();
+            if (window.saveToCloud) window.saveToCloud();
             const vp = document.getElementById('viewport');
             vp.scrollTop = vp.scrollHeight;
         };
 
         window.deleteRow = function(id) {
             window.state.rows = window.state.rows.filter(r => r.id !== id);
+            if (window.state.rows.length === 0) window.state.rows = [createRowObj()];
             window.render();
-            window.save();
+            if (window.saveToCloud) window.saveToCloud();
         };
 
         window.updateRowVal = function(id, field, val) {
@@ -312,7 +288,7 @@
             if (!row) return;
             row[field] = val;
             if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) window.render();
-            window.save();
+            if (window.saveToCloud) window.saveToCloud();
         };
 
         window.updateMeta = function() {
@@ -322,11 +298,31 @@
                 rev: document.getElementById('meta-rev').value,
                 date: document.getElementById('meta-date').value
             };
-            window.save();
+            if (window.saveToCloud) window.saveToCloud();
         };
 
-        // Execution Start
-        window.render(); // Immediate
+        // INITIAL RENDER - Do not wait for anything
+        window.render();
+    </script>
+
+    <!-- Cloud Persistence (Optional Module) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v6-stable';
+
+        window.saveToCloud = async function() {
+            if (!auth.currentUser) return;
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
+            } catch (e) {}
+        };
 
         try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
