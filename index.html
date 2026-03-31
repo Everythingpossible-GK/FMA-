@@ -17,7 +17,7 @@
         /* Dropdown Styling */
         select { background: transparent; font-weight: 700; cursor: pointer; outline: none; width: 100%; text-align: center; height: 100%; min-height: 60px; border: none; appearance: none; }
         
-        /* Rating Colors (1-10) */
+        /* Rating Colors (1-10) based on provided key */
         .rating-1 { background-color: #93e093; color: #064e3b; }
         .rating-2 { background-color: #a7e8a7; color: #064e3b; }
         .rating-3 { background-color: #bcf0bc; color: #064e3b; }
@@ -29,7 +29,7 @@
         .rating-9 { background-color: #f56565; color: #ffffff; }
         .rating-10 { background-color: #e53e3e; color: #ffffff; }
 
-        /* Status Colors */
+        /* Status Colors based on provided key */
         .status-not-started { background-color: #e2f3f5; color: #08606b; }
         .status-in-progress { background-color: #9ae6b4; color: #22543d; }
         .status-complete { background-color: #48bb78; color: #ffffff; }
@@ -41,6 +41,9 @@
         .rpn-col { background-color: #e2f1f8; font-weight: 800; text-align: center; color: #1e293b; width: 60px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background-color: #1a5276; color: white; }
+        
+        /* Ensure table content is visible and scrollable */
+        .table-container { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 0.75rem; border: 1px solid #cbd5e1; background: white; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen p-4 md:p-8">
@@ -107,7 +110,7 @@
         </div>
 
         <!-- Main FMEA Grid Section -->
-        <div class="bg-white rounded-xl shadow-xl overflow-x-auto border border-slate-300">
+        <div class="table-container overflow-x-auto scrollbar-hide">
             <table class="w-full fmea-table min-w-[2200px] border-collapse">
                 <thead>
                     <tr class="bg-slate-50 text-slate-700 text-center border-b border-slate-300">
@@ -155,25 +158,26 @@
                     </tr>
                 </thead>
                 <tbody id="fmea-rows">
-                    <!-- Rows injected via JS -->
+                    <!-- Rows will be injected here -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Firebase Logic -->
+    <!-- Firebase SDK & Logic -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // Initialize Firebase
+        // --- Firebase Config ---
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-worksheet';
 
+        // --- Application State ---
         let state = {
             metadata: {},
             rows: []
@@ -186,34 +190,54 @@
             status: 'Not Started', actionResults: '', dateComp: '', resS: 1, resO: 1, resD: 1
         });
 
+        // --- Core Functions ---
         async function init() {
             lucide.createIcons();
 
+            // Authentication Rule 3
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (e) { console.error("Auth Failed", e); }
+            } catch (e) { console.error("Authentication Error:", e); }
 
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     subscribeToData();
+                } else {
+                    // Fallback for local testing
+                    if (state.rows.length === 0) {
+                        state.rows = [createEmptyRow()];
+                        render();
+                    }
                 }
             });
         }
 
         function subscribeToData() {
+            // Rule 1 Pathing: artifacts/{id}/public/data/state/fmea
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), (snap) => {
                 if (snap.exists()) {
                     state = snap.data();
+                    if (!state.rows || state.rows.length === 0) {
+                        state.rows = [createEmptyRow()];
+                    }
                     render();
-                } else if (state.rows.length === 0) {
+                } else {
+                    // Initialize empty state if document doesn't exist
                     state = { metadata: {}, rows: [createEmptyRow()] };
                     render();
                 }
-            }, (err) => console.error("Snapshot Error", err));
+            }, (err) => {
+                console.error("Firebase Sync Error:", err);
+                // Even on error, show current state
+                if (state.rows.length === 0) {
+                    state.rows = [createEmptyRow()];
+                }
+                render();
+            });
         }
 
         async function save() {
@@ -232,9 +256,10 @@
                     syncEl.classList.replace('text-amber-700', 'text-emerald-700');
                     syncEl.querySelector('span').innerText = 'Synced';
                 }
-            } catch (e) { console.error("Save Error", e); }
+            } catch (e) { console.error("Cloud Save Failed:", e); }
         }
 
+        // --- Event Handlers (Attached to window for global scope) ---
         window.updateMeta = () => {
             state.metadata = {
                 system: document.getElementById('meta-system').value,
@@ -252,7 +277,7 @@
 
         window.addRow = () => {
             state.rows.push(createEmptyRow());
-            render();
+            render(); // Immediate UI update
             save();
         };
 
@@ -271,20 +296,24 @@
             if (!row) return;
             row[field] = val;
             
+            // Recalculate RPNs
             if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) {
-                const rpn1 = (row.s || 0) * (row.o || 0) * (row.d || 0);
-                const rpn2 = (row.resS || 0) * (row.resO || 0) * (row.resD || 0);
+                const rpn1 = (row.s || 1) * (row.o || 1) * (row.d || 1);
+                const rpn2 = (row.resS || 1) * (row.resO || 1) * (row.resD || 1);
                 const rpn1El = document.getElementById(`rpn1-${id}`);
                 const rpn2El = document.getElementById(`rpn2-${id}`);
                 if (rpn1El) rpn1El.innerText = rpn1;
                 if (rpn2El) rpn2El.innerText = rpn2;
             }
+            
             save();
+            // Re-render if status or score changes for color logic
             if (field === 'status' || ['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) {
-                render(); // Re-render to update dynamic classes
+                render();
             }
         };
 
+        // --- Rendering Engine ---
         function render() {
             const m = state.metadata || {};
             const setVal = (id, val) => {
@@ -338,25 +367,25 @@
                     <td class="border-r">${getRatingSelect('o', row.o)}</td>
                     <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
                     <td class="border-r">${getRatingSelect('d', row.d)}</td>
-                    <td class="rpn-col border-r" id="rpn1-${row.id}">${(row.s || 0) * (row.o || 0) * (row.d || 0)}</td>
+                    <td class="rpn-col border-r" id="rpn1-${row.id}">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
                     <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'recActions', this.value)" class="text-blue-700 font-medium">${row.recActions || ''}</textarea></td>
                     <td class="border-r"><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)" class="w-full text-[10px]"></td>
+                    <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)" class="w-full text-[10px] h-full focus:outline-none"></td>
                     
-                    <td class="border-r bg-blue-50/20">
-                        <select class="${currentStatusClass} !h-[30px] !min-h-0 text-[10px] mb-1 uppercase" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
+                    <td class="border-r bg-blue-50/20 p-2">
+                        <select class="${currentStatusClass} !h-[30px] !min-h-0 text-[10px] mb-1 uppercase rounded px-2" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
                             ${statusOptions.map(o => `<option value="${o.label}" ${row.status === o.label ? 'selected' : ''}>${o.label}</option>`).join('')}
                         </select>
                         <textarea oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)" class="!min-h-[30px]">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="border-r bg-blue-50/20 px-2"><input type="date" value="${row.dateComp || ''}" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)" class="w-full text-[10px]"></td>
+                    <td class="border-r bg-blue-50/20 px-2"><input type="date" value="${row.dateComp || ''}" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)" class="w-full text-[10px] h-full focus:outline-none"></td>
                     <td class="border-r">${getRatingSelect('resS', row.resS)}</td>
                     <td class="border-r">${getRatingSelect('resO', row.resO)}</td>
                     <td class="border-r">${getRatingSelect('resD', row.resD)}</td>
-                    <td class="rpn-col bg-blue-200/50" id="rpn2-${row.id}">${(row.resS || 0) * (row.resO || 0) * (row.resD || 0)}</td>
+                    <td class="rpn-col bg-blue-200/50" id="rpn2-${row.id}">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
                     <td class="px-2 text-center">
-                        <button onclick="window.deleteRow('${row.id}')" class="text-slate-300 hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button onclick="window.deleteRow('${row.id}')" class="text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </td>
                 `;
                 container.appendChild(tr);
@@ -364,6 +393,7 @@
             lucide.createIcons();
         }
 
+        // --- Start Application ---
         init();
     </script>
 </body>
