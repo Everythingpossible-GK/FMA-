@@ -9,30 +9,25 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        /* Apply zoom to fit more content in narrow/half-screen views */
-        html {
-            zoom: 0.8; /* Adjust this to 0.7 if still too large */
-            -moz-transform: scale(0.8);
-            -moz-transform-origin: 0 0;
-        }
-
         body { 
             font-family: 'Inter', sans-serif; 
             font-size: 13px; 
-            overflow-x: auto; /* Ensure body allows horizontal scroll */
-            min-width: 1200px;
+            height: 100vh;
+            overflow: hidden; /* We use a flex container for scrolling instead */
         }
 
+        /* Spreadsheet Specifics */
         .fmea-table th { 
             font-weight: 700; 
-            font-size: 11px; 
+            font-size: 10px; 
             text-transform: uppercase; 
-            letter-spacing: 0.025em; 
-            padding: 10px 8px; 
+            letter-spacing: 0.05em; 
+            padding: 8px; 
             vertical-align: middle; 
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 20;
+            white-space: nowrap;
         }
 
         .fmea-table td { padding: 0; border-color: #e2e8f0; }
@@ -40,20 +35,33 @@
         textarea { 
             width: 100%; 
             height: 100%; 
-            min-height: 60px; 
-            padding: 8px; 
+            min-height: 50px; 
+            padding: 6px 8px; 
             font-size: 12px; 
             background: transparent; 
             border: none; 
             resize: none; 
             outline: none; 
             display: block;
+            line-height: 1.4;
         }
         
         textarea:focus { background: #f8fafc; }
         
         /* Dropdown Styling */
-        select { background: transparent; font-weight: 700; cursor: pointer; outline: none; width: 100%; text-align: center; height: 100%; min-height: 60px; border: none; appearance: none; }
+        select { 
+            background: transparent; 
+            font-weight: 700; 
+            cursor: pointer; 
+            outline: none; 
+            width: 100%; 
+            text-align: center; 
+            height: 100%; 
+            min-height: 50px; 
+            border: none; 
+            appearance: none; 
+            font-size: 12px;
+        }
         
         /* Rating Colors (1-10) */
         .rating-1 { background-color: #93e093; color: #064e3b; }
@@ -76,132 +84,107 @@
         .status-overdue { background-color: #63b3ed; color: #ffffff; }
         .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
 
-        .rpn-col { background-color: #e2f1f8; font-weight: 800; text-align: center; color: #1e293b; width: 60px; }
+        .rpn-col { background-color: #e2f1f8; font-weight: 800; text-align: center; color: #1e293b; width: 50px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background-color: #1a5276; color: white; }
         
-        .table-container { 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
-            border-radius: 0.75rem; 
-            border: 1px solid #cbd5e1; 
+        .table-viewport { 
+            flex: 1;
+            overflow: auto;
+            border: 1px solid #cbd5e1;
             background: white;
-            overflow: auto; /* Enable both scrolls */
-            max-height: 70vh; /* Don't let it go forever */
+            position: relative;
         }
 
-        /* Force scrollbars to be visible */
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-            display: block !important;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 6px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+        /* Scrollbar aesthetics */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 p-2 md:p-4">
+<body class="bg-slate-50 flex flex-col p-2 md:p-4 gap-4">
 
-    <div class="w-full mx-auto space-y-4">
-        
-        <!-- App Header & Controls -->
-        <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <div>
-                <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">FMEA Spreadsheet Template</h1>
-                <p class="text-slate-500 text-xs font-medium">Failure Mode and Effects Analysis Professional Terminal</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div id="sync-indicator" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase border border-emerald-200 transition-all">
-                    <i data-lucide="cloud-check" class="w-3 h-3"></i>
-                    <span>Synced</span>
-                </div>
-                <button id="add-row-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-lg active:scale-95">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Add Row
-                </button>
-            </div>
+    <!-- App Header -->
+    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm shrink-0">
+        <div>
+            <h1 class="text-lg font-extrabold text-slate-800 tracking-tight">FMEA Spreadsheet Pro</h1>
+            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Engineering Analysis Terminal</p>
         </div>
-
-        <!-- Metadata Header Section -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-0 border-collapse overflow-hidden rounded-xl border border-slate-300">
-            <div class="header-box p-2 space-y-1 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">System / Product / Process</label>
-                <input type="text" id="meta-system" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
+        <div class="flex items-center gap-3">
+            <div id="sync-indicator" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase border border-emerald-200 transition-all">
+                <i data-lucide="cloud-check" class="w-3 h-3"></i>
+                <span>Synced</span>
             </div>
-            <div class="header-box p-2 space-y-1 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">FMEA ID</label>
-                <input type="text" id="meta-id" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            <div class="header-box p-2 space-y-1 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Revision</label>
-                <input type="text" id="meta-rev" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            <div class="header-box p-2 space-y-1">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Date</label>
-                <input type="date" id="meta-date" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            
-            <div class="header-box p-2 space-y-1 border-t-0 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Subsystem</label>
-                <input type="text" id="meta-subsystem" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            <div class="header-box p-2 space-y-1 border-t-0 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Party Responsible</label>
-                <input type="text" id="meta-party" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            <div class="header-box p-2 space-y-1 border-t-0 border-r-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Approved By</label>
-                <input type="text" id="meta-approved" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-            <div class="header-box p-2 space-y-1 border-t-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Date Completed</label>
-                <input type="date" id="meta-comp-date" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold">
-            </div>
-
-            <div class="header-box p-2 col-span-4 border-t-0">
-                <label class="block text-[9px] font-bold text-slate-500 uppercase">Team Members</label>
-                <input type="text" id="meta-team" class="w-full bg-white/50 border-b border-slate-300 focus:border-blue-500 outline-none px-1 py-0.5 font-bold" placeholder="List team members here...">
-            </div>
-        </div>
-
-        <!-- Main FMEA Grid Section -->
-        <div class="table-container scrollbar-hide">
-            <table class="w-full fmea-table min-w-[2200px] border-collapse">
-                <thead>
-                    <tr class="bg-slate-100 text-slate-700 text-center border-b border-slate-300">
-                        <th class="w-12 border-r bg-slate-200">#</th>
-                        <th class="w-48 border-r">System / Step</th>
-                        <th class="w-48 border-r">Function</th>
-                        <th class="w-64 border-r">Failure Mode</th>
-                        <th class="w-64 border-r">Effects</th>
-                        <th class="w-12 border-r bg-slate-100">S</th>
-                        <th class="w-64 border-r">Causes</th>
-                        <th class="w-12 border-r bg-slate-100">O</th>
-                        <th class="w-64 border-r">Controls</th>
-                        <th class="w-12 border-r bg-slate-100">D</th>
-                        <th class="w-16 border-r bg-slate-200">RPN</th>
-                        <th class="w-64 border-r">Actions</th>
-                        <th class="w-40 border-r">Owner</th>
-                        <th class="w-32 border-r">Due</th>
-                        <!-- Result Header Section -->
-                        <th colspan="6" class="results-header">FMEA Results</th>
-                        <th class="w-10"></th>
-                    </tr>
-                </thead>
-                <tbody id="fmea-rows">
-                    <!-- Rows injected via JS -->
-                </tbody>
-            </table>
+            <button id="add-row-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-lg active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Row
+            </button>
         </div>
     </div>
 
-    <!-- Firebase SDK & Logic -->
+    <!-- Metadata Section (Now More Compact) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-0 border-collapse overflow-hidden rounded-xl border border-slate-300 shrink-0">
+        <div class="header-box p-2 border-r">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">System / Process</label>
+            <input type="text" id="meta-system" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+        <div class="header-box p-2 border-r">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">FMEA ID</label>
+            <input type="text" id="meta-id" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+        <div class="header-box p-2 border-r">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">Revision</label>
+            <input type="text" id="meta-rev" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+        <div class="header-box p-2">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">Date</label>
+            <input type="date" id="meta-date" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+        
+        <div class="header-box p-2 border-t border-r">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">Party Responsible</label>
+            <input type="text" id="meta-party" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+        <div class="header-box p-2 border-t border-r md:col-span-2">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">Team Members</label>
+            <input type="text" id="meta-team" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold" placeholder="List experts...">
+        </div>
+        <div class="header-box p-2 border-t">
+            <label class="block text-[8px] font-black text-slate-500 uppercase">Date Completed</label>
+            <input type="date" id="meta-comp-date" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        </div>
+    </div>
+
+    <!-- Table Viewport -->
+    <div class="table-viewport rounded-xl shadow-inner scrollbar-hide">
+        <table class="w-full fmea-table min-w-[2000px] border-collapse bg-white">
+            <thead>
+                <tr class="bg-slate-800 text-white text-center">
+                    <th class="w-10 border-r border-slate-700">#</th>
+                    <th class="w-48 border-r border-slate-700">System / Step</th>
+                    <th class="w-48 border-r border-slate-700">Function</th>
+                    <th class="w-60 border-r border-slate-700">Failure Mode</th>
+                    <th class="w-60 border-r border-slate-700">Effects</th>
+                    <th class="w-12 border-r border-slate-700 bg-slate-700">S</th>
+                    <th class="w-60 border-r border-slate-700">Causes</th>
+                    <th class="w-12 border-r border-slate-700 bg-slate-700">O</th>
+                    <th class="w-60 border-r border-slate-700">Controls</th>
+                    <th class="w-12 border-r border-slate-700 bg-slate-700">D</th>
+                    <th class="w-16 border-r border-slate-700 bg-blue-900">RPN</th>
+                    <th class="w-60 border-r border-slate-700">Actions</th>
+                    <th class="w-40 border-r border-slate-700">Owner</th>
+                    <th class="w-28 border-r border-slate-700">Due</th>
+                    <th colspan="6" class="results-header">Post-Action FMEA Results</th>
+                    <th class="w-10"></th>
+                </tr>
+            </thead>
+            <tbody id="fmea-rows">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Firebase Implementation -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
@@ -222,20 +205,16 @@
 
         let state = {
             metadata: {},
-            rows: [createEmptyRow()]
+            rows: []
         };
 
         function render() {
+            // Render Metadata
             const m = state.metadata || {};
-            const metaIds = [
-                ['meta-system', m.system], ['meta-id', m.id], ['meta-rev', m.rev], 
-                ['meta-date', m.date], ['meta-subsystem', m.subsystem], 
-                ['meta-party', m.party], ['meta-approved', m.approved], 
-                ['meta-comp-date', m.compDate], ['meta-team', m.team]
-            ];
-            metaIds.forEach(([id, val]) => {
-                const el = document.getElementById(id);
-                if (el) el.value = val || '';
+            const metaFields = ['system', 'id', 'rev', 'date', 'party', 'team', 'comp-date'];
+            metaFields.forEach(f => {
+                const el = document.getElementById(`meta-${f}`);
+                if (el) el.value = m[f.replace('-', '')] || '';
             });
 
             const container = document.getElementById('fmea-rows');
@@ -269,7 +248,7 @@
                 const currentStatusClass = statusOptions.find(o => o.label === row.status)?.class || '';
 
                 tr.innerHTML = `
-                    <td class="text-center font-bold text-slate-400 border-r bg-slate-50/50">${idx + 1}</td>
+                    <td class="text-center font-black text-slate-300 border-r text-xs">${idx + 1}</td>
                     <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="step">${row.step || ''}</textarea></td>
                     <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="func">${row.func || ''}</textarea></td>
                     <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="mode">${row.mode || ''}</textarea></td>
@@ -279,58 +258,51 @@
                     <td class="border-r">${getRatingSelect('o', row.o)}</td>
                     <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="controls">${row.controls || ''}</textarea></td>
                     <td class="border-r">${getRatingSelect('d', row.d)}</td>
-                    <td class="rpn-col border-r" id="rpn1-${row.id}">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
-                    <td class="border-r"><textarea class="row-input text-blue-700 font-medium" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
+                    <td class="rpn-col border-r text-xs" id="rpn1-${row.id}">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
+                    <td class="border-r"><textarea class="row-input text-blue-700 font-bold" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
                     <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="owner">${row.owner || ''}</textarea></td>
                     <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" class="row-input w-full text-[10px]" data-id="${row.id}" data-field="dateDue"></td>
                     
-                    <td class="border-r bg-blue-50/20 p-2">
-                        <select class="${currentStatusClass} !h-[30px] !min-h-0 text-[10px] mb-1 uppercase rounded px-2 row-input" data-id="${row.id}" data-field="status">
+                    <td class="border-r bg-blue-50/10 p-1">
+                        <select class="${currentStatusClass} !h-[25px] !min-h-0 text-[9px] mb-1 uppercase rounded row-input" data-id="${row.id}" data-field="status">
                             ${statusOptions.map(o => `<option value="${o.label}" ${row.status === o.label ? 'selected' : ''}>${o.label}</option>`).join('')}
                         </select>
-                        <textarea class="row-input !min-h-[30px]" data-id="${row.id}" data-field="actionResults">${row.actionResults || ''}</textarea>
+                        <textarea class="row-input !min-h-[25px] !py-1">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="border-r bg-blue-50/20 px-2"><input type="date" value="${row.dateComp || ''}" class="row-input w-full text-[10px]" data-id="${row.id}" data-field="dateComp"></td>
+                    <td class="border-r bg-blue-50/10 px-2"><input type="date" value="${row.dateComp || ''}" class="row-input w-full text-[10px]" data-id="${row.id}" data-field="dateComp"></td>
                     <td class="border-r">${getRatingSelect('resS', row.resS)}</td>
                     <td class="border-r">${getRatingSelect('resO', row.resO)}</td>
                     <td class="border-r">${getRatingSelect('resD', row.resD)}</td>
-                    <td class="rpn-col bg-blue-200/50" id="rpn2-${row.id}">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
+                    <td class="rpn-col bg-blue-100" id="rpn2-${row.id}">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
                     <td class="px-2 text-center">
-                        <button class="delete-row-btn text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded" data-id="${row.id}">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <button class="delete-btn text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded" data-id="${row.id}">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i>
                         </button>
                     </td>
                 `;
                 container.appendChild(tr);
             });
             
-            attachRowListeners();
+            attachListeners();
             lucide.createIcons();
         }
 
         async function save() {
             if (!auth.currentUser) return;
             const syncEl = document.getElementById('sync-indicator');
-            if (syncEl) {
-                syncEl.classList.replace('bg-emerald-100', 'bg-amber-100');
-                syncEl.querySelector('span').innerText = 'Syncing...';
-            }
+            if (syncEl) syncEl.querySelector('span').innerText = 'Syncing...';
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), state);
-                if (syncEl) {
-                    syncEl.classList.replace('bg-amber-100', 'bg-emerald-100');
-                    syncEl.querySelector('span').innerText = 'Synced';
-                }
+                if (syncEl) syncEl.querySelector('span').innerText = 'Synced';
             } catch (e) { console.error(e); }
         }
 
-        function attachRowListeners() {
-            document.querySelectorAll('.row-input, select').forEach(el => {
+        function attachListeners() {
+            // Row Inputs
+            document.querySelectorAll('.row-input, select[data-id]').forEach(el => {
                 const id = el.dataset.id;
                 const field = el.dataset.field;
-                if (!id || !field) return;
-
                 el.oninput = el.onchange = (e) => {
                     const row = state.rows.find(r => r.id === id);
                     if (!row) return;
@@ -342,31 +314,30 @@
                 };
             });
 
-            document.querySelectorAll('.delete-row-btn').forEach(btn => {
+            // Delete Button
+            document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.dataset.id;
                     state.rows = state.rows.filter(r => r.id !== id);
-                    if (state.rows.length === 0) state.rows = [createEmptyRow()];
                     render();
                     save();
                 };
             });
         }
 
+        // Metadata Inputs
         document.querySelectorAll('input[id^="meta-"]').forEach(el => {
             el.oninput = () => {
-                state.metadata[el.id.replace('meta-', '')] = el.value;
+                state.metadata[el.id.replace('meta-', '').replace('-', '')] = el.value;
                 save();
             };
         });
 
+        // Add Row Button
         document.getElementById('add-row-btn').onclick = () => {
             state.rows.push(createEmptyRow());
             render();
             save();
-            // Scroll table to the end to see the new row
-            const container = document.querySelector('.table-container');
-            if (container) container.scrollTop = container.scrollHeight;
         };
 
         async function init() {
