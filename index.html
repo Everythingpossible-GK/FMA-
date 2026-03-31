@@ -3,67 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FMEA Spreadsheet Template</title>
+    <title>FMEA Spreadsheet Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-            font-size: 13px; 
-            height: 100vh;
-            overflow: hidden; /* We use a flex container for scrolling instead */
+        :root {
+            --header-height: 60px;
+            --meta-height: 140px;
         }
 
-        /* Spreadsheet Specifics */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            font-size: 12px; 
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        /* Essential Spreadsheet Styling */
         .fmea-table th { 
-            font-weight: 700; 
+            font-weight: 800; 
             font-size: 10px; 
             text-transform: uppercase; 
             letter-spacing: 0.05em; 
-            padding: 8px; 
+            padding: 12px 8px; 
             vertical-align: middle; 
             position: sticky;
             top: 0;
-            z-index: 20;
-            white-space: nowrap;
+            z-index: 50;
+            background: #1e293b;
+            color: white;
+            border-right: 1px solid #334155;
         }
 
-        .fmea-table td { padding: 0; border-color: #e2e8f0; }
+        .fmea-table td { 
+            padding: 0; 
+            border: 1px solid #e2e8f0; 
+            background: white;
+        }
         
         textarea { 
             width: 100%; 
             height: 100%; 
-            min-height: 50px; 
-            padding: 6px 8px; 
+            min-height: 80px; 
+            padding: 10px; 
             font-size: 12px; 
             background: transparent; 
             border: none; 
             resize: none; 
             outline: none; 
             display: block;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: #334155;
         }
         
         textarea:focus { background: #f8fafc; }
         
-        /* Dropdown Styling */
+        /* Dropdown Colors from the Key */
         select { 
             background: transparent; 
-            font-weight: 700; 
+            font-weight: 800; 
             cursor: pointer; 
             outline: none; 
             width: 100%; 
             text-align: center; 
-            height: 100%; 
-            min-height: 50px; 
+            height: 80px; 
             border: none; 
             appearance: none; 
-            font-size: 12px;
+            font-size: 14px;
         }
         
-        /* Rating Colors (1-10) */
         .rating-1 { background-color: #93e093; color: #064e3b; }
         .rating-2 { background-color: #a7e8a7; color: #064e3b; }
         .rating-3 { background-color: #bcf0bc; color: #064e3b; }
@@ -75,7 +87,6 @@
         .rating-9 { background-color: #f56565; color: #ffffff; }
         .rating-10 { background-color: #e53e3e; color: #ffffff; }
 
-        /* Status Colors */
         .status-not-started { background-color: #e2f3f5; color: #08606b; }
         .status-in-progress { background-color: #9ae6b4; color: #22543d; }
         .status-complete { background-color: #48bb78; color: #ffffff; }
@@ -84,107 +95,122 @@
         .status-overdue { background-color: #63b3ed; color: #ffffff; }
         .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
 
-        .rpn-col { background-color: #e2f1f8; font-weight: 800; text-align: center; color: #1e293b; width: 50px; }
+        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
-        .results-header { background-color: #1a5276; color: white; }
-        
-        .table-viewport { 
+        .results-header { background: #1a5276 !important; color: white !important; }
+
+        /* Scroller fixes for Half Screen */
+        #main-scroller {
             flex: 1;
             overflow: auto;
-            border: 1px solid #cbd5e1;
-            background: white;
-            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #cbd5e1;
+            border-top: 2px solid #94a3b8;
         }
 
-        /* Scrollbar aesthetics */
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        .scroll-content {
+            display: inline-block;
+            min-width: 2400px; /* Force minimum horizontal width */
+            padding-bottom: 100px;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 14px; height: 14px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 7px; border: 3px solid #f1f1f1; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
-<body class="bg-slate-50 flex flex-col p-2 md:p-4 gap-4">
+<body class="flex flex-col">
 
-    <!-- App Header -->
-    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm shrink-0">
-        <div>
-            <h1 class="text-lg font-extrabold text-slate-800 tracking-tight">FMEA Spreadsheet Pro</h1>
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Engineering Analysis Terminal</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <div id="sync-indicator" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase border border-emerald-200 transition-all">
-                <i data-lucide="cloud-check" class="w-3 h-3"></i>
-                <span>Synced</span>
+    <!-- Top Action Bar -->
+    <header class="h-[60px] bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100] shadow-xl">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
             </div>
-            <button id="add-row-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition flex items-center gap-2 shadow-lg active:scale-95">
-                <i data-lucide="plus" class="w-4 h-4"></i> Add Row
-            </button>
-        </div>
-    </div>
-
-    <!-- Metadata Section (Now More Compact) -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-0 border-collapse overflow-hidden rounded-xl border border-slate-300 shrink-0">
-        <div class="header-box p-2 border-r">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">System / Process</label>
-            <input type="text" id="meta-system" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
-        </div>
-        <div class="header-box p-2 border-r">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">FMEA ID</label>
-            <input type="text" id="meta-id" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
-        </div>
-        <div class="header-box p-2 border-r">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">Revision</label>
-            <input type="text" id="meta-rev" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
-        </div>
-        <div class="header-box p-2">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">Date</label>
-            <input type="date" id="meta-date" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+            <div>
+                <h1 class="text-base font-black tracking-tight leading-none uppercase">FMEA Spreadsheet Pro</h1>
+                <p class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">ISO 9001 / IATF 16949 COMPLIANT</p>
+            </div>
         </div>
         
-        <div class="header-box p-2 border-t border-r">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">Party Responsible</label>
-            <input type="text" id="meta-party" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+        <div class="flex items-center gap-4">
+            <div id="sync-indicator" class="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase border border-emerald-500/20">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                <span>Connected</span>
+            </div>
+            <button id="add-row-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Entry Row
+            </button>
         </div>
-        <div class="header-box p-2 border-t border-r md:col-span-2">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">Team Members</label>
-            <input type="text" id="meta-team" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold" placeholder="List experts...">
-        </div>
-        <div class="header-box p-2 border-t">
-            <label class="block text-[8px] font-black text-slate-500 uppercase">Date Completed</label>
-            <input type="date" id="meta-comp-date" class="w-full bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none px-1 text-xs font-bold">
+    </header>
+
+    <!-- Metadata Panel (Collapsible intent) -->
+    <div id="meta-panel" class="bg-white border-b border-slate-300 p-4 shrink-0 shadow-sm overflow-hidden transition-all">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div class="header-box p-2 rounded">
+                <label class="block text-[8px] font-black text-slate-500 uppercase">System / Process</label>
+                <input type="text" id="meta-system" class="w-full bg-white/50 border-b border-slate-400 outline-none px-1 text-xs font-bold py-1">
+            </div>
+            <div class="header-box p-2 rounded">
+                <label class="block text-[8px] font-black text-slate-500 uppercase">FMEA ID</label>
+                <input type="text" id="meta-id" class="w-full bg-white/50 border-b border-slate-400 outline-none px-1 text-xs font-bold py-1">
+            </div>
+            <div class="header-box p-2 rounded">
+                <label class="block text-[8px] font-black text-slate-500 uppercase">Revision</label>
+                <input type="text" id="meta-rev" class="w-full bg-white/50 border-b border-slate-400 outline-none px-1 text-xs font-bold py-1">
+            </div>
+            <div class="header-box p-2 rounded">
+                <label class="block text-[8px] font-black text-slate-500 uppercase">Study Date</label>
+                <input type="date" id="meta-date" class="w-full bg-white/50 border-b border-slate-400 outline-none px-1 text-xs font-bold py-1">
+            </div>
         </div>
     </div>
 
-    <!-- Table Viewport -->
-    <div class="table-viewport rounded-xl shadow-inner scrollbar-hide">
-        <table class="w-full fmea-table min-w-[2000px] border-collapse bg-white">
-            <thead>
-                <tr class="bg-slate-800 text-white text-center">
-                    <th class="w-10 border-r border-slate-700">#</th>
-                    <th class="w-48 border-r border-slate-700">System / Step</th>
-                    <th class="w-48 border-r border-slate-700">Function</th>
-                    <th class="w-60 border-r border-slate-700">Failure Mode</th>
-                    <th class="w-60 border-r border-slate-700">Effects</th>
-                    <th class="w-12 border-r border-slate-700 bg-slate-700">S</th>
-                    <th class="w-60 border-r border-slate-700">Causes</th>
-                    <th class="w-12 border-r border-slate-700 bg-slate-700">O</th>
-                    <th class="w-60 border-r border-slate-700">Controls</th>
-                    <th class="w-12 border-r border-slate-700 bg-slate-700">D</th>
-                    <th class="w-16 border-r border-slate-700 bg-blue-900">RPN</th>
-                    <th class="w-60 border-r border-slate-700">Actions</th>
-                    <th class="w-40 border-r border-slate-700">Owner</th>
-                    <th class="w-28 border-r border-slate-700">Due</th>
-                    <th colspan="6" class="results-header">Post-Action FMEA Results</th>
-                    <th class="w-10"></th>
-                </tr>
-            </thead>
-            <tbody id="fmea-rows">
-                <!-- Data will be injected here -->
-            </tbody>
-        </table>
+    <!-- Main Spreadsheet Scroller -->
+    <div id="main-scroller">
+        <div class="scroll-content">
+            <table class="fmea-table border-collapse">
+                <thead>
+                    <tr>
+                        <th class="w-16">#</th>
+                        <th class="w-64">System / Step</th>
+                        <th class="w-64">Function</th>
+                        <th class="w-72">Potential Failure Mode</th>
+                        <th class="w-72">Effects of Failure</th>
+                        <th class="w-16">S</th>
+                        <th class="w-72">Root Causes</th>
+                        <th class="w-16">O</th>
+                        <th class="w-72">Current Controls</th>
+                        <th class="w-16">D</th>
+                        <th class="w-24">RPN</th>
+                        <th class="w-72">Recommended Actions</th>
+                        <th class="w-48">Owner</th>
+                        <th class="w-36">Due Date</th>
+                        <th colspan="6" class="results-header">Action Result Review</th>
+                        <th class="w-12 bg-red-900/20"></th>
+                    </tr>
+                    <tr class="bg-slate-700 text-slate-300 text-[9px]">
+                        <th colspan="14" class="text-left px-4 !bg-slate-700 !py-1">Initial Analysis Phase</th>
+                        <th class="results-header !bg-slate-600 !py-1">Action Status</th>
+                        <th class="results-header !bg-slate-600 !py-1">Comp Date</th>
+                        <th class="results-header !bg-slate-600 !py-1">S</th>
+                        <th class="results-header !bg-slate-600 !py-1">O</th>
+                        <th class="results-header !bg-slate-600 !py-1">D</th>
+                        <th class="results-header !bg-slate-600 !py-1">New RPN</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="row-container">
+                    <!-- Rows rendered here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Firebase Implementation -->
+    <!-- Firebase Script -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
@@ -194,10 +220,10 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-worksheet';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v2';
 
-        const createEmptyRow = () => ({
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+        const createRow = () => ({
+            id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5),
             step: '', func: '', mode: '', effects: '', s: 1, causes: '', o: 1, controls: '', d: 1,
             recActions: '', owner: '', dateDue: '',
             status: 'Not Started', actionResults: '', dateComp: '', resS: 1, resO: 1, resD: 1
@@ -205,143 +231,130 @@
 
         let state = {
             metadata: {},
-            rows: []
+            rows: [createRow()] // Start with one row immediately
         };
 
-        function render() {
-            // Render Metadata
-            const m = state.metadata || {};
-            const metaFields = ['system', 'id', 'rev', 'date', 'party', 'team', 'comp-date'];
-            metaFields.forEach(f => {
-                const el = document.getElementById(`meta-${f}`);
-                if (el) el.value = m[f.replace('-', '')] || '';
-            });
-
-            const container = document.getElementById('fmea-rows');
+        function renderRows() {
+            const container = document.getElementById('row-container');
             if (!container) return;
             container.innerHTML = '';
-            
-            if (!state.rows || state.rows.length === 0) {
-                state.rows = [createEmptyRow()];
-            }
 
             state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-200 hover:bg-slate-50 transition-colors";
                 
                 const getRatingSelect = (field, val) => {
-                    let options = '';
-                    for(let i=1; i<=10; i++) options += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
-                    return `<select class="rating-${val}" data-id="${row.id}" data-field="${field}">${options}</select>`;
+                    let opts = '';
+                    for(let i=1; i<=10; i++) opts += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
+                    return `<select class="rating-${val}" data-id="${row.id}" data-field="${field}">${opts}</select>`;
                 };
 
                 const statusOptions = [
-                    { label: 'Not Started', class: 'status-not-started' },
-                    { label: 'In Progress', class: 'status-in-progress' },
-                    { label: 'Complete', class: 'status-complete' },
-                    { label: 'Needs Review', class: 'status-needs-review' },
-                    { label: 'Approved', class: 'status-approved' },
-                    { label: 'Overdue', class: 'status-overdue' },
-                    { label: 'On Hold', class: 'status-on-hold' }
+                    'Not Started', 'In Progress', 'Complete', 'Needs Review', 'Approved', 'Overdue', 'On Hold'
                 ];
 
-                const currentStatusClass = statusOptions.find(o => o.label === row.status)?.class || '';
+                const currentStatusClass = 'status-' + row.status.toLowerCase().replace(/\s+/g, '-');
 
                 tr.innerHTML = `
-                    <td class="text-center font-black text-slate-300 border-r text-xs">${idx + 1}</td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="step">${row.step || ''}</textarea></td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="func">${row.func || ''}</textarea></td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="mode">${row.mode || ''}</textarea></td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="effects">${row.effects || ''}</textarea></td>
-                    <td class="border-r">${getRatingSelect('s', row.s)}</td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="causes">${row.causes || ''}</textarea></td>
-                    <td class="border-r">${getRatingSelect('o', row.o)}</td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="controls">${row.controls || ''}</textarea></td>
-                    <td class="border-r">${getRatingSelect('d', row.d)}</td>
-                    <td class="rpn-col border-r text-xs" id="rpn1-${row.id}">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
-                    <td class="border-r"><textarea class="row-input text-blue-700 font-bold" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
-                    <td class="border-r"><textarea class="row-input" data-id="${row.id}" data-field="owner">${row.owner || ''}</textarea></td>
-                    <td class="border-r px-2"><input type="date" value="${row.dateDue || ''}" class="row-input w-full text-[10px]" data-id="${row.id}" data-field="dateDue"></td>
+                    <td class="text-center font-black text-slate-400 text-sm border-r bg-slate-50">${idx + 1}</td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="step">${row.step || ''}</textarea></td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="func">${row.func || ''}</textarea></td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="mode">${row.mode || ''}</textarea></td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="effects">${row.effects || ''}</textarea></td>
+                    <td class="p-0">${getRatingSelect('s', row.s)}</td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="causes">${row.causes || ''}</textarea></td>
+                    <td class="p-0">${getRatingSelect('o', row.o)}</td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="controls">${row.controls || ''}</textarea></td>
+                    <td class="p-0">${getRatingSelect('d', row.d)}</td>
+                    <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
+                    <td><textarea class="edit-cell font-bold text-blue-700" data-id="${row.id}" data-field="recActions">${row.recActions || ''}</textarea></td>
+                    <td><textarea class="edit-cell" data-id="${row.id}" data-field="owner">${row.owner || ''}</textarea></td>
+                    <td class="px-2"><input type="date" value="${row.dateDue || ''}" class="edit-cell w-full h-full text-[10px]" data-id="${row.id}" data-field="dateDue"></td>
                     
-                    <td class="border-r bg-blue-50/10 p-1">
-                        <select class="${currentStatusClass} !h-[25px] !min-h-0 text-[9px] mb-1 uppercase rounded row-input" data-id="${row.id}" data-field="status">
-                            ${statusOptions.map(o => `<option value="${o.label}" ${row.status === o.label ? 'selected' : ''}>${o.label}</option>`).join('')}
+                    <td class="bg-blue-50/10 p-2">
+                        <select class="${currentStatusClass} !h-[25px] !min-h-0 text-[10px] mb-1 uppercase rounded-md edit-cell" data-id="${row.id}" data-field="status">
+                            ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
-                        <textarea class="row-input !min-h-[25px] !py-1">${row.actionResults || ''}</textarea>
+                        <textarea class="edit-cell !min-h-[40px] !p-1 !text-[11px]" data-id="${row.id}" data-field="actionResults">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="border-r bg-blue-50/10 px-2"><input type="date" value="${row.dateComp || ''}" class="row-input w-full text-[10px]" data-id="${row.id}" data-field="dateComp"></td>
-                    <td class="border-r">${getRatingSelect('resS', row.resS)}</td>
-                    <td class="border-r">${getRatingSelect('resO', row.resO)}</td>
-                    <td class="border-r">${getRatingSelect('resD', row.resD)}</td>
-                    <td class="rpn-col bg-blue-100" id="rpn2-${row.id}">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
+                    <td class="bg-blue-50/10 px-2"><input type="date" value="${row.dateComp || ''}" class="edit-cell w-full h-full text-[10px]" data-id="${row.id}" data-field="dateComp"></td>
+                    <td class="p-0">${getRatingSelect('resS', row.resS)}</td>
+                    <td class="p-0">${getRatingSelect('resO', row.resO)}</td>
+                    <td class="p-0">${getRatingSelect('resD', row.resD)}</td>
+                    <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
-                    <td class="px-2 text-center">
-                        <button class="delete-btn text-slate-300 hover:text-red-500 transition-all p-1 hover:bg-red-50 rounded" data-id="${row.id}">
-                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    <td class="text-center bg-slate-50">
+                        <button class="delete-btn text-slate-300 hover:text-red-500 p-2 transition-all" data-id="${row.id}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
                 `;
                 container.appendChild(tr);
             });
             
-            attachListeners();
             lucide.createIcons();
+            bindEvents();
         }
 
-        async function save() {
+        async function sync() {
             if (!auth.currentUser) return;
-            const syncEl = document.getElementById('sync-indicator');
-            if (syncEl) syncEl.querySelector('span').innerText = 'Syncing...';
+            document.getElementById('sync-indicator').querySelector('span').innerText = 'Syncing...';
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), state);
-                if (syncEl) syncEl.querySelector('span').innerText = 'Synced';
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'sheet'), state);
+                document.getElementById('sync-indicator').querySelector('span').innerText = 'Connected';
             } catch (e) { console.error(e); }
         }
 
-        function attachListeners() {
-            // Row Inputs
-            document.querySelectorAll('.row-input, select[data-id]').forEach(el => {
-                const id = el.dataset.id;
-                const field = el.dataset.field;
+        function bindEvents() {
+            // Textarea and Select Inputs
+            document.querySelectorAll('.edit-cell, select[data-id]').forEach(el => {
                 el.oninput = el.onchange = (e) => {
+                    const id = el.dataset.id;
+                    const field = el.dataset.field;
                     const row = state.rows.find(r => r.id === id);
                     if (!row) return;
+
                     let val = e.target.value;
-                    if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) val = parseInt(val) || 1;
+                    if (['s', 'o', 'd', 'resS', 'resO', 'resD'].includes(field)) val = parseInt(val);
                     row[field] = val;
-                    if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) render();
-                    save();
+
+                    if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) {
+                        renderRows(); // Visual refresh for colors/calcs
+                    }
+                    sync();
                 };
             });
 
-            // Delete Button
+            // Delete Action
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.onclick = () => {
-                    const id = btn.dataset.id;
-                    state.rows = state.rows.filter(r => r.id !== id);
-                    render();
-                    save();
+                    state.rows = state.rows.filter(r => r.id !== btn.dataset.id);
+                    if (state.rows.length === 0) state.rows = [createRow()];
+                    renderRows();
+                    sync();
                 };
             });
         }
 
-        // Metadata Inputs
-        document.querySelectorAll('input[id^="meta-"]').forEach(el => {
-            el.oninput = () => {
-                state.metadata[el.id.replace('meta-', '').replace('-', '')] = el.value;
-                save();
+        // Meta Inputs
+        document.querySelectorAll('input[id^="meta-"]').forEach(input => {
+            input.oninput = () => {
+                state.metadata[input.id.replace('meta-', '')] = input.value;
+                sync();
             };
         });
 
         // Add Row Button
         document.getElementById('add-row-btn').onclick = () => {
-            state.rows.push(createEmptyRow());
-            render();
-            save();
+            state.rows.push(createRow());
+            renderRows();
+            sync();
+            // Auto-scroll horizontally to the new row if needed (not applicable for vertical add, but good for UX)
+            const scroller = document.getElementById('main-scroller');
+            scroller.scrollTop = scroller.scrollHeight;
         };
 
-        async function init() {
-            render();
+        async function start() {
+            renderRows();
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -352,17 +365,22 @@
 
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'fmea'), (snap) => {
+                    onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'sheet'), (snap) => {
                         if (snap.exists()) {
                             state = snap.data();
-                            render();
+                            renderRows();
+                            // Update meta inputs
+                            Object.entries(state.metadata || {}).forEach(([k, v]) => {
+                                const el = document.getElementById('meta-' + k);
+                                if (el) el.value = v;
+                            });
                         }
                     });
                 }
             });
         }
 
-        init();
+        start();
     </script>
 </body>
 </html>
