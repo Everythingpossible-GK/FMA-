@@ -30,16 +30,16 @@
             border-collapse: collapse;
             background: white;
             table-layout: fixed;
-            min-width: 2600px; /* Increased to accommodate all original columns */
+            min-width: 2800px; /* Increased to accommodate larger font/spacing */
         }
 
         .fmea-table th { 
             background: #0f172a;
             color: white;
             font-weight: 800; 
-            font-size: 10px; 
+            font-size: 12px; /* Increased from 10px */
             text-transform: uppercase; 
-            padding: 8px 6px; 
+            padding: 10px 8px; 
             border: 1px solid #334155;
             position: sticky;
             top: 0;
@@ -50,10 +50,10 @@
         .fmea-table .guidance-row th {
             background: #f8fafc;
             color: #64748b;
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
             font-weight: 500;
             text-transform: none;
-            line-height: 1.2;
+            line-height: 1.4;
             height: auto;
             border: 1px solid #e2e8f0;
         }
@@ -61,15 +61,15 @@
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
-            height: 85px; 
+            height: 100px; /* Increased from 85px */
             vertical-align: top;
         }
         
         textarea { 
             width: 100%; 
             height: 100%; 
-            padding: 10px; 
-            font-size: 12px; 
+            padding: 12px; 
+            font-size: 14px; /* Increased from 12px */
             background: transparent; 
             border: none; 
             resize: none; 
@@ -88,10 +88,10 @@
             outline: none; 
             width: 100%; 
             text-align: center; 
-            height: 85px; 
+            height: 100px; 
             border: none; 
             appearance: none; 
-            font-size: 14px;
+            font-size: 16px; /* Increased from 14px */
         }
         
         .rating-1 { background-color: #93e093; color: #064e3b; }
@@ -113,7 +113,7 @@
         .status-overdue { background-color: #63b3ed; color: #ffffff; }
         .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
 
-        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 60px; font-size: 14px; line-height: 85px; }
+        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 70px; font-size: 16px; line-height: 100px; }
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background: #1a5276 !important; color: white !important; }
 
@@ -134,64 +134,64 @@
 
     <div class="app-shell">
         <!-- Top Toolbar -->
-        <header class="h-12 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100]">
+        <header class="h-14 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100]">
             <div class="flex items-center gap-3">
                 <i data-lucide="shield-check" class="text-blue-500 w-5 h-5"></i>
-                <h1 class="text-xs font-black uppercase tracking-tight">FMEA SPREADSHEET PRO</h1>
+                <h1 class="text-sm font-black uppercase tracking-tight">FMEA SPREADSHEET PRO</h1>
             </div>
             <div class="flex items-center gap-4">
-                <div id="sync-status" class="text-[9px] font-bold text-slate-400 uppercase flex items-center gap-2">
+                <div id="sync-status" class="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2">
                     <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span id="sync-text">System Active</span>
                 </div>
-                <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded font-black text-[10px] uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
-                    <i data-lucide="plus-circle" class="w-3 h-3"></i> Add Row
+                <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Row
                 </button>
             </div>
         </header>
 
-        <!-- Complete Metadata Section (Restored from Template) -->
-        <div class="bg-white border-b border-slate-300 p-2 shrink-0">
-            <div class="grid grid-cols-4 gap-1 mb-1">
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">System / Product / Process</label>
-                    <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+        <!-- Complete Metadata Section -->
+        <div class="bg-white border-b border-slate-300 p-3 shrink-0">
+            <div class="grid grid-cols-4 gap-2 mb-2">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">System / Product / Process</label>
+                    <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">FMEA ID</label>
-                    <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">FMEA ID</label>
+                    <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Revision</label>
-                    <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Revision</label>
+                    <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Date</label>
-                    <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Date</label>
+                    <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
             </div>
-            <div class="grid grid-cols-4 gap-1 mb-1">
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Subsystem / Product / Process</label>
-                    <input type="text" id="meta-subsystem" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+            <div class="grid grid-cols-4 gap-2 mb-2">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Subsystem / Product / Process</label>
+                    <input type="text" id="meta-subsystem" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Party Responsible</label>
-                    <input type="text" id="meta-responsible" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Party Responsible</label>
+                    <input type="text" id="meta-responsible" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Approved By</label>
-                    <input type="text" id="meta-approved" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Approved By</label>
+                    <input type="text" id="meta-approved" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Date Completed</label>
-                    <input type="date" id="meta-completedDate" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Date Completed</label>
+                    <input type="date" id="meta-completedDate" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
             </div>
             <div class="grid grid-cols-1">
-                <div class="header-box p-1 rounded">
-                    <label class="block text-[7px] font-black text-slate-500 uppercase">Team</label>
-                    <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[10px] font-bold outline-none" placeholder="List team members...">
+                <div class="header-box p-2 rounded">
+                    <label class="block text-[9px] font-black text-slate-500 uppercase">Team</label>
+                    <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none" placeholder="List team members...">
                 </div>
             </div>
         </div>
@@ -202,29 +202,29 @@
                 <thead>
                     <!-- Top Row: Column Categories -->
                     <tr>
-                        <th style="width: 45px">ID</th>
+                        <th style="width: 60px">ID</th>
                         <th style="width: 250px">System / Item / Process Step</th>
                         <th style="width: 250px">Function</th>
-                        <th style="width: 300px">Potential Failure Mode</th>
-                        <th style="width: 300px">Effects of Failure</th>
-                        <th style="width: 70px">Severity</th>
-                        <th style="width: 300px">Causes</th>
-                        <th style="width: 70px">Occur</th>
-                        <th style="width: 300px">Current Controls</th>
-                        <th style="width: 70px">Detect</th>
-                        <th style="width: 80px">RPN</th>
-                        <th style="width: 300px">Recommended Actions</th>
-                        <th style="width: 200px">Owner</th>
-                        <th style="width: 150px">Date Due</th>
+                        <th style="width: 320px">Potential Failure Mode</th>
+                        <th style="width: 320px">Effects of Failure</th>
+                        <th style="width: 80px">Severity</th>
+                        <th style="width: 320px">Causes</th>
+                        <th style="width: 80px">Occur</th>
+                        <th style="width: 320px">Current Controls</th>
+                        <th style="width: 80px">Detect</th>
+                        <th style="width: 90px">RPN</th>
+                        <th style="width: 320px">Recommended Actions</th>
+                        <th style="width: 220px">Owner</th>
+                        <th style="width: 160px">Date Due</th>
                         <th style="width: 250px" class="results-header">Action Results</th>
-                        <th style="width: 150px" class="results-header">Date Completed</th>
-                        <th style="width: 70px" class="results-header">Sev</th>
-                        <th style="width: 70px" class="results-header">Occ</th>
-                        <th style="width: 70px" class="results-header">Det</th>
-                        <th style="width: 80px" class="results-header">RPN</th>
-                        <th style="width: 60px"></th>
+                        <th style="width: 160px" class="results-header">Date Completed</th>
+                        <th style="width: 80px" class="results-header">Sev</th>
+                        <th style="width: 80px" class="results-header">Occ</th>
+                        <th style="width: 80px" class="results-header">Det</th>
+                        <th style="width: 90px" class="results-header">RPN</th>
+                        <th style="width: 70px"></th>
                     </tr>
-                    <!-- Guidance Row: Restored Instruction Text -->
+                    <!-- Guidance Row -->
                     <tr class="guidance-row">
                         <th>#</th>
                         <th>Name, ID number, etc.</th>
@@ -290,7 +290,7 @@
                 const statusClass = 'status-' + (row.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
 
                 tr.innerHTML = `
-                    <td class="bg-slate-50 text-center font-black text-slate-300 text-xs border-r">${idx + 1}</td>
+                    <td class="bg-slate-50 text-center font-black text-slate-300 text-sm border-r">${idx + 1}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
@@ -303,23 +303,23 @@
                     <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
                     <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    <td class="px-1 pt-4"><input type="date" value="${row.dateDue || ''}" class="w-full text-[10px]" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
+                    <td class="px-2 pt-6"><input type="date" value="${row.dateDue || ''}" class="w-full text-xs" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
                     
                     <td class="bg-blue-50/10 p-2">
-                        <select class="${statusClass} !h-6 !min-h-0 text-[10px] mb-1 uppercase rounded" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
+                        <select class="${statusClass} !h-8 !min-h-0 text-xs mb-1 uppercase rounded font-bold" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
                             ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
-                        <textarea class="!min-h-[40px] !p-1 !text-[11px]" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
+                        <textarea class="!min-h-[50px] !p-2 !text-xs" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
                     </td>
-                    <td class="bg-blue-50/10 px-1 pt-4"><input type="date" value="${row.dateComp || ''}" class="w-full text-[10px]" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
+                    <td class="bg-blue-50/10 px-2 pt-6"><input type="date" value="${row.dateComp || ''}" class="w-full text-xs" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
                     <td>${getSelectHTML('resS', row.resS)}</td>
                     <td>${getSelectHTML('resO', row.resO)}</td>
                     <td>${getSelectHTML('resD', row.resD)}</td>
                     <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
-                    <td class="text-center bg-slate-50 pt-4">
+                    <td class="text-center bg-slate-50 pt-6">
                         <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
                         </button>
                     </td>
                 `;
