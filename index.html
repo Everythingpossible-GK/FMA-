@@ -79,22 +79,22 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
         }
-        .meta-label:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
 
-        /* Dropdown Colors */
-        select { 
-            background: transparent; 
-            font-weight: 800; 
-            cursor: pointer; 
-            outline: none; 
-            width: 100%; 
-            text-align: center; 
-            height: 110px; 
-            border: none; 
-            appearance: none; 
-            font-size: 18px;
+        /* Rating Picker Button Style */
+        .rating-picker {
+            width: 100%;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .rating-picker:hover {
+            filter: brightness(0.9);
+            transform: scale(0.98);
         }
         
         .rating-1 { background-color: #93e093; color: #064e3b; }
@@ -153,19 +153,28 @@
         .sod-table-ref {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 14px;
         }
         .sod-table-ref th {
             background: #1e293b;
             color: white;
-            padding: 10px;
+            padding: 12px;
             text-align: left;
             position: sticky;
             top: 0;
         }
+        .sod-table-ref tr.clickable-sod-row {
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .sod-table-ref tr.clickable-sod-row:hover {
+            filter: brightness(1.1);
+            outline: 2px solid #3b82f6;
+            z-index: 10;
+        }
         .sod-table-ref td {
-            padding: 10px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -189,7 +198,7 @@
                 </div>
                 <div class="flex gap-2">
                     <button onclick="window.toggleSOD()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
-                        <i data-lucide="book-open" class="w-4 h-4"></i> SOD Table
+                        <i data-lucide="book-open" class="w-4 h-4"></i> SOD Tables
                     </button>
                     <button onclick="window.downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
                         <i data-lucide="download" class="w-4 h-4"></i> Download Report
@@ -205,43 +214,43 @@
         <div class="bg-white border-b border-slate-300 p-3 shrink-0">
             <div class="grid grid-cols-4 gap-2 mb-2">
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_system">System / Product / Process</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_system">System / Product / Process</label>
                     <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_id">FMEA ID</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_id">FMEA ID</label>
                     <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_rev">Revision</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_rev">Revision</label>
                     <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_date">Date</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_date">Date</label>
                     <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
             </div>
             <div class="grid grid-cols-4 gap-2 mb-2">
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_subsystem">Subsystem / Product / Process</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_subsystem">Subsystem / Product / Process</label>
                     <input type="text" id="meta-subsystem" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_resp">Party Responsible</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_resp">Party Responsible</label>
                     <input type="text" id="meta-responsible" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_approved">Approved By</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_approved">Approved By</label>
                     <input type="text" id="meta-approved" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_compDate">Date Completed</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_compDate">Date Completed</label>
                     <input type="date" id="meta-completedDate" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
             </div>
             <div class="grid grid-cols-1">
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label meta-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_team">Team</label>
+                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_team">Team</label>
                     <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none" placeholder="List team members...">
                 </div>
             </div>
@@ -286,44 +295,44 @@
     <div id="sod-modal">
         <div class="sod-content">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">SOD Reference Table (Terminal Context)</h2>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">SOD Picker - Select Value</h2>
+                    <p id="picker-target-info" class="text-blue-600 font-bold uppercase text-xs">Selecting for: [Field]</p>
+                </div>
                 <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             
-            <div class="space-y-10">
+            <div class="space-y-12">
                 <!-- Severity -->
-                <section>
+                <section id="sod-section-S">
                     <h3 class="text-lg font-bold mb-3 text-blue-800 border-b-2 border-blue-100 pb-1">1. Severity (S)</h3>
-                    <p class="text-xs text-slate-500 mb-4 italic">Assesses the impact on safety, environment, and terminal productivity.</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-32">Impact</th><th>Description (Terminal Context)</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Impact</th><th>Description (Terminal Context)</th></tr>
                         </thead>
                         <tbody id="sod-s-body"></tbody>
                     </table>
                 </section>
 
                 <!-- Occurrence -->
-                <section>
+                <section id="sod-section-O">
                     <h3 class="text-lg font-bold mb-3 text-amber-800 border-b-2 border-amber-100 pb-1">2. Occurrence (O)</h3>
-                    <p class="text-xs text-slate-500 mb-4 italic">Likelihood that a specific cause will happen during operational life.</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-32">Likelihood</th><th>Probability of Failure</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Likelihood</th><th>Probability of Failure</th></tr>
                         </thead>
                         <tbody id="sod-o-body"></tbody>
                     </table>
                 </section>
 
                 <!-- Detection -->
-                <section>
+                <section id="sod-section-D">
                     <h3 class="text-lg font-bold mb-3 text-emerald-800 border-b-2 border-emerald-100 pb-1">3. Detection (D)</h3>
-                    <p class="text-xs text-slate-500 mb-4 italic">Likelihood that current controls (sensors, Navis, CMMS) will catch failure.</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-32">Detection</th><th>Description of Control</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Detection</th><th>Description of Control</th></tr>
                         </thead>
                         <tbody id="sod-d-body"></tbody>
                     </table>
@@ -383,7 +392,8 @@
         window.state = {
             metadata: {},
             headings: {},
-            rows: [createRowObj()]
+            rows: [createRowObj()],
+            picker: { rowId: null, field: null } // Track active picker target
         };
 
         window.render = function() {
@@ -394,12 +404,8 @@
             window.state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 
-                const getRatingSelect = (val, field) => {
-                    let opts = '';
-                    for (let i = 1; i <= 10; i++) {
-                        opts += `<option value="${i}" ${val == i ? 'selected' : ''}>${i}</option>`;
-                    }
-                    return `<select class="rating-${val}" onchange="window.updateRowVal('${row.id}', '${field}', parseInt(this.value))">${opts}</select>`;
+                const getRatingPickerHTML = (field, val) => {
+                    return `<div class="rating-picker rating-${val}" onclick="window.openPicker('${row.id}', '${field}')">${val}</div>`;
                 };
 
                 const statusOptions = ['Not Started', 'In Progress', 'Complete', 'Needs Review', 'Approved', 'Overdue', 'On Hold'];
@@ -411,11 +417,11 @@
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects || ''}</textarea></td>
-                    <td>${getRatingSelect(row.s, 's')}</td>
+                    <td>${getRatingPickerHTML('s', row.s)}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes || ''}</textarea></td>
-                    <td>${getRatingSelect(row.o, 'o')}</td>
+                    <td>${getRatingPickerHTML('o', row.o)}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
-                    <td>${getRatingSelect(row.d, 'd')}</td>
+                    <td>${getRatingPickerHTML('d', row.d)}</td>
                     <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
                     <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
@@ -428,9 +434,9 @@
                         <textarea class="!min-h-[50px] !p-2 !text-xs" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
                     </td>
                     <td class="bg-blue-50/10 px-2 pt-6"><input type="date" value="${row.dateComp || ''}" class="w-full text-xs" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
-                    <td>${getRatingSelect(row.resS, 'resS')}</td>
-                    <td>${getRatingSelect(row.resO, 'resO')}</td>
-                    <td>${getRatingSelect(row.resD, 'resD')}</td>
+                    <td>${getRatingPickerHTML('resS', row.resS)}</td>
+                    <td>${getRatingPickerHTML('resO', row.resO)}</td>
+                    <td>${getRatingPickerHTML('resD', row.resD)}</td>
                     <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
                     <td class="text-center bg-slate-50 pt-6">
@@ -517,7 +523,36 @@
             const isOpen = modal.style.display === 'block';
             modal.style.display = isOpen ? 'none' : 'block';
             if (!isOpen) {
+                // By default show all sections if opened via toolbar
+                document.getElementById('sod-section-S').style.display = 'block';
+                document.getElementById('sod-section-O').style.display = 'block';
+                document.getElementById('sod-section-D').style.display = 'block';
+                document.getElementById('picker-target-info').innerText = 'FMEA SOD REFERENCE GUIDE';
+                window.state.picker = { rowId: null, field: null };
                 renderSODTables();
+            }
+        };
+
+        window.openPicker = function(rowId, field) {
+            window.state.picker = { rowId, field };
+            const modal = document.getElementById('sod-modal');
+            modal.style.display = 'block';
+            
+            // Hide irrelevant sections
+            const type = field.toUpperCase().includes('S') ? 'S' : field.toUpperCase().includes('O') ? 'O' : 'D';
+            document.getElementById('sod-section-S').style.display = type === 'S' ? 'block' : 'none';
+            document.getElementById('sod-section-O').style.display = type === 'O' ? 'block' : 'none';
+            document.getElementById('sod-section-D').style.display = type === 'D' ? 'block' : 'none';
+            
+            document.getElementById('picker-target-info').innerText = `Selecting ${type} rating for row ${window.state.rows.findIndex(r => r.id === rowId) + 1}`;
+            
+            renderSODTables();
+        };
+
+        window.selectRating = function(value) {
+            if (window.state.picker.rowId) {
+                window.updateRowVal(window.state.picker.rowId, window.state.picker.field, value);
+                window.toggleSOD();
             }
         };
 
@@ -527,11 +562,12 @@
                 body.innerHTML = '';
                 SOD_DATA[type].forEach(item => {
                     const tr = document.createElement('tr');
-                    tr.className = `rating-${item.r}`;
+                    tr.className = `rating-${item.r} clickable-sod-row`;
+                    tr.onclick = () => window.selectRating(item.r);
                     tr.innerHTML = `
-                        <td class="font-bold text-center border-r border-white/20">${item.r}</td>
+                        <td class="font-black text-center border-r border-white/20">${item.r}</td>
                         <td class="font-bold border-r border-white/20">${item.i}</td>
-                        <td>${item.d}</td>
+                        <td class="font-medium">${item.d}</td>
                     `;
                     body.appendChild(tr);
                 });
