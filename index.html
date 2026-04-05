@@ -49,18 +49,19 @@
             text-align: center;
         }
 
+        /* Adjusted Row Height from 150px to 100px */
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
-            height: 150px; 
+            height: 100px; 
             vertical-align: top;
         }
         
         textarea { 
             width: 100%; 
             height: 100%; 
-            padding: 8px; 
-            font-size: 13px; 
+            padding: 6px 8px; 
+            font-size: 12px; 
             background: transparent; 
             border: none; 
             resize: none; 
@@ -78,7 +79,7 @@
             top: 100%;
             right: 0;
             margin-top: 0.5rem;
-            width: 200px;
+            width: 180px;
             background: white;
             border: 1px solid #e2e8f0;
             border-radius: 0.75rem;
@@ -99,7 +100,6 @@
             text-transform: uppercase;
         }
         .dropdown-item:hover { background-color: #f8fafc; color: #2563eb; }
-        .dropdown-divider { height: 1px; background-color: #f1f5f9; margin: 4px 0; }
 
         /* Rating Picker Colors */
         .rating-none { background-color: #f1f5f9; color: #cbd5e1; }
@@ -124,7 +124,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .results-header { background: #1a5276 !important; color: white !important; }
@@ -133,15 +133,15 @@
         .rating-picker {
             width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 28px; cursor: pointer;
+            font-weight: 900; font-size: 24px; cursor: pointer;
             transition: all 0.2s; user-select: none; line-height: 1;
         }
-        .small-picker { height: 50px; font-size: 24px; border-radius: 4px; }
+        .small-picker { height: 40px; font-size: 18px; border-radius: 4px; }
         .rating-picker:hover { filter: brightness(0.9); transform: scale(0.98); }
 
-        .action-sub-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        .action-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px; font-size: 11px; outline: none; }
-        .sod-footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-top: 8px; border-top: 2px solid #e2e8f0; padding-top: 8px; }
+        .action-sub-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .action-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 3px 4px; font-size: 10px; outline: none; }
+        .sod-footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-top: 4px; border-top: 2px solid #e2e8f0; padding-top: 4px; }
         
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .table-viewport { flex: 1; overflow: auto; width: 100%; background: #cbd5e1; }
@@ -153,6 +153,13 @@
         
         /* Export Wrapper (Hidden) */
         #export-wrapper { display: none; }
+
+        /* Animation for Cloud Sync */
+        @keyframes pulse-emerald {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .syncing-dot { animation: pulse-emerald 1s infinite; }
     </style>
 </head>
 <body>
@@ -178,28 +185,34 @@
                     <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span id="sync-text">System Active</span>
                 </div>
+                
                 <div class="flex gap-2">
-                    <button onclick="window.toggleSOD()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
-                        <i data-lucide="book-open" class="w-4 h-4"></i> SOD Tables
+                    <!-- Project Actions (Save/Load) Moved out for Visibility -->
+                    <button onclick="window.downloadJSON()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all flex items-center gap-2 shadow-lg">
+                        <i data-lucide="save" class="w-3.5 h-3.5"></i> Save JSON
+                    </button>
+                    <button onclick="window.triggerJSONUpload()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all flex items-center gap-2 shadow-lg">
+                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> Restore
+                    </button>
+
+                    <button onclick="window.toggleSOD()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all flex items-center gap-2 shadow-lg">
+                        <i data-lucide="book-open" class="w-3.5 h-3.5"></i> SOD Tables
                     </button>
                     
                     <div class="relative group">
-                        <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
-                            <i data-lucide="download" class="w-4 h-4"></i> Download Report
+                        <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all flex items-center gap-2 shadow-lg">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export
                         </button>
                         <div class="dropdown-menu group-hover:block">
                             <div onclick="window.downloadDoc('excel')" class="dropdown-item"><i data-lucide="table" class="w-4 h-4 text-emerald-600"></i> Excel (XLS)</div>
                             <div onclick="window.downloadDoc('pdf')" class="dropdown-item"><i data-lucide="file-type" class="w-4 h-4 text-red-600"></i> PDF Document</div>
                             <div onclick="window.downloadDoc('word')" class="dropdown-item"><i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i> Word (DOC)</div>
                             <div onclick="window.downloadDoc('csv')" class="dropdown-item"><i data-lucide="file-code" class="w-4 h-4 text-slate-600"></i> Data (CSV)</div>
-                            <div class="dropdown-divider"></div>
-                            <div onclick="window.downloadJSON()" class="dropdown-item"><i data-lucide="save" class="w-4 h-4 text-blue-500"></i> Save Project (JSON)</div>
-                            <div onclick="window.triggerJSONUpload()" class="dropdown-item"><i data-lucide="upload" class="w-4 h-4 text-amber-500"></i> Restore Project</div>
                         </div>
                     </div>
 
-                    <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Row
+                    <button onclick="window.addRow()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded font-black text-[10px] uppercase transition-all flex items-center gap-2 shadow-lg">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Row
                     </button>
                 </div>
             </div>
@@ -349,7 +362,7 @@
                     </tr>`;
                 });
                 actionsHTML += `</tbody></table>
-                <button onclick="window.addAction('${row.id}')" class="no-print text-[10px] font-black text-blue-600 p-2 uppercase flex items-center gap-1 hover:bg-blue-50 rounded mt-1"><i data-lucide="plus" class="w-3 h-3"></i> Add Task</button>`;
+                <button onclick="window.addAction('${row.id}')" class="no-print text-[9px] font-black text-blue-600 p-1.5 uppercase flex items-center gap-1 hover:bg-blue-50 rounded mt-0.5"><i data-lucide="plus" class="w-3 h-3"></i> Add Task</button>`;
 
                 tr.innerHTML = `
                     <td class="bg-slate-50"><div class="centered-cell font-black text-slate-400 text-sm">${idx + 1}</div></td>
@@ -364,7 +377,7 @@
                     <td class="bg-slate-50 border-x border-slate-200"><div class="rpn-col">${calculateRPN(row.s, row.o, row.d)}</div></td>
                     <td class="p-2">${actionsHTML}</td>
                     <td class="bg-blue-50/10 p-2 flex flex-col h-full">
-                        <textarea class="flex-grow !h-20 border border-slate-200 rounded mb-1 bg-white shadow-inner" placeholder="${isFirst?EG.outcome:''}" oninput="window.updateRowVal('${row.id}', 'resultText', this.value)">${row.resultText}</textarea>
+                        <textarea class="flex-grow !h-12 border border-slate-200 rounded mb-1 bg-white shadow-inner" placeholder="${isFirst?EG.outcome:''}" oninput="window.updateRowVal('${row.id}', 'resultText', this.value)">${row.resultText}</textarea>
                         <input type="date" class="action-input" value="${row.resultDate}" onchange="window.updateRowVal('${row.id}', 'resultDate', this.value)">
                         <div class="sod-footer-grid">
                             ${getRatingPicker('resS', row.resS, true, EG.resS)}
@@ -438,19 +451,22 @@
                     const imported = JSON.parse(e.target.result);
                     if (imported.rows && imported.metadata) {
                         window.state = imported;
-                        // Sync UI
-                        Object.entries(window.state.metadata || {}).forEach(([k,v]) => {
-                            const el = document.getElementById('meta-'+k);
-                            if(el) el.value = v;
-                        });
+                        // Sync UI Metadata Fields
+                        if(window.state.metadata) {
+                            Object.entries(window.state.metadata).forEach(([k,v]) => {
+                                const el = document.getElementById('meta-'+k);
+                                if(el) el.value = v;
+                            });
+                        }
                         window.render();
                         window.saveToCloud?.();
-                        alert('Project restored successfully.');
+                        // alert replacement
+                        console.log('Project restored successfully.');
                     } else {
-                        alert('Invalid FMEA file format.');
+                        console.error('Invalid FMEA file format.');
                     }
                 } catch (err) {
-                    alert('Error parsing JSON file.');
+                    console.error('Error parsing JSON file.');
                 }
             };
             reader.readAsText(file);
@@ -476,14 +492,6 @@
                     th { background-color: #0f172a; color: white; border: 1px solid #334155; padding: 8px; font-weight: bold; text-transform: uppercase; font-size: 8pt; }
                     td { border: 1px solid #e2e880; padding: 6px; vertical-align: top; word-wrap: break-word; }
                     .rating-1 { background-color: #93e093; color: #064e3b; text-align: center; font-weight: bold; }
-                    .rating-2 { background-color: #a7e8a7; color: #064e3b; text-align: center; font-weight: bold; }
-                    .rating-3 { background-color: #bcf0bc; color: #064e3b; text-align: center; font-weight: bold; }
-                    .rating-4 { background-color: #f0f090; color: #71710a; text-align: center; font-weight: bold; }
-                    .rating-5 { background-color: #f5f5a7; color: #71710a; text-align: center; font-weight: bold; }
-                    .rating-6 { background-color: #fbd38d; color: #7b341e; text-align: center; font-weight: bold; }
-                    .rating-7 { background-color: #f6ad55; color: #7b341e; text-align: center; font-weight: bold; }
-                    .rating-8 { background-color: #ed8936; color: #ffffff; text-align: center; font-weight: bold; }
-                    .rating-9 { background-color: #f56565; color: #ffffff; text-align: center; font-weight: bold; }
                     .rating-10 { background-color: #e53e3e; color: #ffffff; text-align: center; font-weight: bold; }
                     .rpn { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; font-size: 11pt; }
                     .meta-block { margin-bottom: 20px; }
@@ -591,7 +599,12 @@
 
         window.saveToCloud = async () => {
             if(!auth.currentUser) return;
+            const dot = document.getElementById('sync-dot');
+            if(dot) dot.classList.add('syncing-dot');
+            
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
+            
+            if(dot) dot.classList.remove('syncing-dot');
         };
 
         const initAuth = async () => {
@@ -604,7 +617,11 @@
             if(u) onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), snap => {
                 if(snap.exists()){
                     window.state = snap.data(); window.render();
-                    Object.entries(window.state.metadata || {}).forEach(([k,v]) => { const el = document.getElementById('meta-'+k); if(el) el.value=v; });
+                    if(window.state.metadata) {
+                        Object.entries(window.state.metadata).forEach(([k,v]) => { 
+                            const el = document.getElementById('meta-'+k); if(el) el.value=v; 
+                        });
+                    }
                 }
             });
         });
