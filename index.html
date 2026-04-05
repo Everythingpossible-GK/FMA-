@@ -44,6 +44,7 @@
             position: sticky;
             top: 0;
             z-index: 50;
+            text-align: center;
         }
 
         .fmea-table td { 
@@ -68,6 +69,27 @@
         
         textarea:focus { background: #f8fafc; }
         
+        /* Center Alignment Classes */
+        .centered-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            padding: 4px;
+        }
+
+        /* Special container for Action Result cell to stack Status and Text */
+        .action-result-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 8px;
+            gap: 4px;
+        }
+
         /* Editable Heading Style */
         .editable-label {
             outline: none;
@@ -83,20 +105,35 @@
         /* Rating Picker Button Style */
         .rating-picker {
             width: 100%;
-            height: 110px;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 24px;
+            font-size: 32px;
             cursor: pointer;
             transition: all 0.2s;
+            user-select: none;
         }
         .rating-picker:hover {
             filter: brightness(0.9);
             transform: scale(0.98);
         }
         
+        /* Date Input Styling */
+        input[type="date"] {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            background: #f8fafc;
+            outline: none;
+            width: 90%;
+        }
+
+        /* Colors */
         .rating-1 { background-color: #93e093; color: #064e3b; }
         .rating-2 { background-color: #a7e8a7; color: #064e3b; }
         .rating-3 { background-color: #bcf0bc; color: #064e3b; }
@@ -108,15 +145,26 @@
         .rating-9 { background-color: #f56565; color: #ffffff; }
         .rating-10 { background-color: #e53e3e; color: #ffffff; }
 
-        .status-not-started { background-color: #e2f3f5; color: #08606b; }
-        .status-in-progress { background-color: #9ae6b4; color: #22543d; }
-        .status-complete { background-color: #48bb78; color: #ffffff; }
-        .status-needs-review { background-color: #e0f2f1; color: #004d40; }
-        .status-approved { background-color: #81e6d9; color: #234e52; }
-        .status-overdue { background-color: #63b3ed; color: #ffffff; }
-        .status-on-hold { background-color: #e2e8f0; color: #4a5568; }
+        .status-not-started { background-color: #f1f5f9; color: #475569; }
+        .status-in-progress { background-color: #dcfce7; color: #166534; }
+        .status-complete { background-color: #16a34a; color: #ffffff; }
+        .status-needs-review { background-color: #fef9c3; color: #854d0e; }
+        .status-approved { background-color: #dbeafe; color: #1e40af; }
+        .status-overdue { background-color: #fee2e2; color: #991b1b; }
+        .status-on-hold { background-color: #f3f4f6; color: #374151; }
 
-        .rpn-col { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; width: 70px; font-size: 18px; line-height: 110px; }
+        .rpn-col { 
+            background-color: #f0f9ff; 
+            font-weight: 900; 
+            color: #0c4a6e; 
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px; 
+        }
+        
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .results-header { background: #1a5276 !important; color: white !important; }
 
@@ -149,6 +197,7 @@
             overflow-y: auto;
             padding: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #e2e8f0;
         }
         .sod-table-ref {
             width: 100%;
@@ -156,25 +205,30 @@
             font-size: 14px;
         }
         .sod-table-ref th {
-            background: #1e293b;
+            background: #0f172a;
             color: white;
             padding: 12px;
             text-align: left;
             position: sticky;
             top: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .sod-table-ref tr.clickable-sod-row {
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: all 0.15s;
         }
         .sod-table-ref tr.clickable-sod-row:hover {
             filter: brightness(1.1);
-            outline: 2px solid #3b82f6;
+            outline: 3px solid #3b82f6;
+            transform: scale(1.005);
             z-index: 10;
         }
         .sod-table-ref td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            line-height: 1.4;
         }
 
         ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -296,8 +350,8 @@
         <div class="sod-content">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">SOD Picker - Select Value</h2>
-                    <p id="picker-target-info" class="text-blue-600 font-bold uppercase text-xs">Selecting for: [Field]</p>
+                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">SOD Picker - Select Rank</h2>
+                    <p id="picker-target-info" class="text-blue-600 font-bold uppercase text-xs">Click a row to pick that value</p>
                 </div>
                 <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
@@ -307,10 +361,11 @@
             <div class="space-y-12">
                 <!-- Severity -->
                 <section id="sod-section-S">
-                    <h3 class="text-lg font-bold mb-3 text-blue-800 border-b-2 border-blue-100 pb-1">1. Severity (S)</h3>
+                    <h3 class="text-lg font-bold mb-3 text-blue-800 border-b-2 border-blue-100 pb-1">1. Severity (S) – "How much does it hurt?"</h3>
+                    <p class="text-xs text-slate-500 mb-2 italic">Ask: If this fails, how bad is the consequence?</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Impact</th><th>Description (Terminal Context)</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Impact</th><th>Simple Definition</th></tr>
                         </thead>
                         <tbody id="sod-s-body"></tbody>
                     </table>
@@ -318,10 +373,11 @@
 
                 <!-- Occurrence -->
                 <section id="sod-section-O">
-                    <h3 class="text-lg font-bold mb-3 text-amber-800 border-b-2 border-amber-100 pb-1">2. Occurrence (O)</h3>
+                    <h3 class="text-lg font-bold mb-3 text-amber-800 border-b-2 border-amber-100 pb-1">2. Occurrence (O) – "How often does it happen?"</h3>
+                    <p class="text-xs text-slate-500 mb-2 italic">Ask: What are the odds of this failure actually occurring?</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Likelihood</th><th>Probability of Failure</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Frequency</th><th>Simple Definition</th></tr>
                         </thead>
                         <tbody id="sod-o-body"></tbody>
                     </table>
@@ -329,10 +385,11 @@
 
                 <!-- Detection -->
                 <section id="sod-section-D">
-                    <h3 class="text-lg font-bold mb-3 text-emerald-800 border-b-2 border-emerald-100 pb-1">3. Detection (D)</h3>
+                    <h3 class="text-lg font-bold mb-3 text-emerald-800 border-b-2 border-emerald-100 pb-1">3. Detection (D) – "Will we catch it?"</h3>
+                    <p class="text-xs text-slate-500 mb-2 italic">Ask: If it fails, how likely are we to find it before it reaches the customer?</p>
                     <table class="sod-table-ref">
                         <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Detection</th><th>Description of Control</th></tr>
+                            <tr><th class="w-16">Rank</th><th class="w-48">Detection</th><th>Simple Definition</th></tr>
                         </thead>
                         <tbody id="sod-d-body"></tbody>
                     </table>
@@ -343,42 +400,43 @@
 
     <!-- Core Script Logic (NOT MODULE) -->
     <script>
+        // Simplified SOD Data from User Request
         const SOD_DATA = {
             S: [
-                { r: 10, i: "Hazardous", d: "Failure results in a major safety incident or fatality without warning." },
-                { r: 9, i: "Serious", d: "Failure involves high risk of injury or major environmental breach (e.g., oil spill in basin)." },
-                { r: 8, i: "Extreme", d: "Total equipment breakdown. Causes vessel 'pro-forma' delay or complete berth stoppage." },
-                { r: 7, i: "Major", d: "Significant disruption. Equipment is inoperable for a full shift." },
-                { r: 6, i: "Moderate", d: "Partial loss of function. Decreased moves per hour (MPH) but still operational." },
-                { r: 5, i: "Low", d: "Minor effect on performance. Operator can work around the issue." },
-                { r: 4, i: "Very Low", d: "Minor nuisance. Does not affect cycle time significantly." },
-                { r: 3, i: "Minor", d: "Cosmetic damage or slight vibration/noise reported by operator." },
-                { r: 2, i: "Very Minor", d: "Barely noticeable defect. No impact on terminal KPIs." },
-                { r: 1, i: "None", d: "No discernible effect." }
+                { r: 10, i: "Danger", d: "Very high risk. Someone could get hurt or you are breaking the law." },
+                { r: 9, i: "Danger", d: "Very high risk. Someone could get hurt or you are breaking the law." },
+                { r: 8, i: "Major", d: "The machine/part is dead. The customer will be very angry." },
+                { r: 7, i: "Major", d: "The machine/part is dead. The customer will be very angry." },
+                { r: 6, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
+                { r: 5, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
+                { r: 4, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
+                { r: 3, i: "Minor", d: "A small nuisance. A slight wrap-up or scratch, but it still functions." },
+                { r: 2, i: "Minor", d: "A small nuisance. A slight wrap-up or scratch, but it still functions." },
+                { r: 1, i: "None", d: "No one will even notice." }
             ],
             O: [
-                { r: 10, i: "Very High", d: "Inevitable failure. Happens multiple times per week." },
-                { r: 9, i: "High", d: "Recurring problem. Likely to happen once a week." },
-                { r: 8, i: "Frequent", d: "Frequent failures. Happens at least once a month." },
-                { r: 7, i: "Persistent", d: "Moderate frequency. Seen every quarter." },
-                { r: 6, i: "Moderate", d: "Occasional failure. Historically seen 2–3 times a year." },
-                { r: 5, i: "Low", d: "Uncommon. Seen perhaps once a year per fleet." },
-                { r: 4, i: "Very Low", d: "Rare. Associated with specific high-stress conditions." },
-                { r: 3, i: "Remote", d: "Very rare. Only a few cases documented in terminal history." },
-                { r: 2, i: "Slight", d: "Highly unlikely. Preventive maintenance (PM) usually catches this." },
-                { r: 1, i: "Nearly Impossible", d: "Failure is eliminated through design or robust TPM." }
+                { r: 10, i: "Constant", d: "It happens all the time (daily or every few cycles)." },
+                { r: 9, i: "Constant", d: "It happens all the time (daily or every few cycles)." },
+                { r: 8, i: "Frequent", d: "It happens regularly (once a week or once a month)." },
+                { r: 7, i: "Frequent", d: "It happens regularly (once a week or once a month)." },
+                { r: 6, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
+                { r: 5, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
+                { r: 4, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
+                { r: 3, i: "Rare", d: "It has happened before, but very rarely." },
+                { r: 2, i: "Rare", d: "It has happened before, but very rarely." },
+                { r: 1, i: "Unlikely", d: "It has almost never happened in the history of this part." }
             ],
             D: [
-                { r: 10, i: "Absolute Uncertainty", d: "No controls in place. Failure cannot be detected until it happens." },
-                { r: 9, i: "Very Remote", d: "Controls are very unlikely to detect the failure (e.g., internal structural fatigue)." },
-                { r: 8, i: "Remote", d: "Only detected during major annual overhauls or teardowns." },
-                { r: 7, i: "Very Low", d: "Detected only by experienced operators by 'feel' or 'sound'." },
-                { r: 6, i: "Low", d: "Detected during monthly PM inspections or visual walk-arounds." },
-                { r: 5, i: "Moderate", d: "Detected by basic dashboard warnings or low-level PLC alarms." },
-                { r: 4, i: "Moderately High", d: "High chance of detection via daily pre-checklists." },
-                { r: 3, i: "High", d: "Reliable sensors/interlocks automatically stop equipment before failure." },
-                { r: 2, i: "Very High", d: "Redundant automated monitoring systems (Condition-Based Monitoring)." },
-                { r: 1, i: "Almost Certain", d: "The failure mode is physically impossible or detected immediately by foolproof (Poka-Yoke) systems." }
+                { r: 10, i: "Impossible", d: "We are \"blind.\" There is no way to see the failure until it's too late." },
+                { r: 9, i: "Impossible", d: "We are \"blind.\" There is no way to see the failure until it's too late." },
+                { r: 8, i: "Low", d: "We might catch it if a human is lucky and looks at the right spot." },
+                { r: 7, i: "Low", d: "We might catch it if a human is lucky and looks at the right spot." },
+                { r: 6, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
+                { r: 5, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
+                { r: 4, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
+                { r: 3, i: "High", d: "We have sensors or automatic alarms that catch it most of the time." },
+                { r: 2, i: "High", d: "We have sensors or automatic alarms that catch it most of the time." },
+                { r: 1, i: "Certain", d: "The system automatically stops if this happens (Poka-yoke)." }
             ]
         };
 
@@ -393,7 +451,7 @@
             metadata: {},
             headings: {},
             rows: [createRowObj()],
-            picker: { rowId: null, field: null } // Track active picker target
+            picker: { rowId: null, field: null } 
         };
 
         window.render = function() {
@@ -412,7 +470,9 @@
                 const statusClass = 'status-' + (row.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
 
                 tr.innerHTML = `
-                    <td class="bg-slate-50 text-center font-black text-slate-300 text-sm border-r">${idx + 1}</td>
+                    <td class="bg-slate-50 border-r border-slate-200">
+                        <div class="centered-cell font-black text-slate-400 text-sm">${idx + 1}</div>
+                    </td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
@@ -422,27 +482,47 @@
                     <td>${getRatingPickerHTML('o', row.o)}</td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
                     <td>${getRatingPickerHTML('d', row.d)}</td>
-                    <td class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</td>
+                    <td class="bg-slate-50 border-x border-slate-200">
+                        <div class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</div>
+                    </td>
                     <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
                     <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    <td class="px-2 pt-6"><input type="date" value="${row.dateDue || ''}" class="w-full text-xs" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)"></td>
                     
-                    <td class="bg-blue-50/10 p-2">
-                        <select class="${statusClass} !h-8 !min-h-0 text-xs mb-1 uppercase rounded font-bold" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
-                            ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                        </select>
-                        <textarea class="!min-h-[50px] !p-2 !text-xs" oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
+                    <td>
+                        <div class="centered-cell">
+                            <input type="date" value="${row.dateDue || ''}" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)">
+                        </div>
                     </td>
-                    <td class="bg-blue-50/10 px-2 pt-6"><input type="date" value="${row.dateComp || ''}" class="w-full text-xs" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)"></td>
+                    
+                    <td class="bg-blue-50/10">
+                        <div class="action-result-container">
+                            <select class="${statusClass} w-full text-[11px] h-8 rounded-md border border-slate-300 font-bold uppercase px-2 shadow-sm" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
+                                ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                            </select>
+                            <textarea class="grow !p-2 !text-xs border border-slate-200 rounded-md bg-white shadow-inner" placeholder="Result details..." oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
+                        </div>
+                    </td>
+                    
+                    <td class="bg-blue-50/10">
+                        <div class="centered-cell">
+                            <input type="date" value="${row.dateComp || ''}" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)">
+                        </div>
+                    </td>
+                    
                     <td>${getRatingPickerHTML('resS', row.resS)}</td>
                     <td>${getRatingPickerHTML('resO', row.resO)}</td>
                     <td>${getRatingPickerHTML('resD', row.resD)}</td>
-                    <td class="rpn-col bg-blue-100">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</td>
                     
-                    <td class="text-center bg-slate-50 pt-6">
-                        <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
+                    <td class="bg-blue-100 border-x border-slate-200">
+                        <div class="rpn-col bg-transparent">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</div>
+                    </td>
+                    
+                    <td class="bg-slate-50">
+                        <div class="centered-cell">
+                            <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </td>
                 `;
                 container.appendChild(tr);
@@ -523,11 +603,10 @@
             const isOpen = modal.style.display === 'block';
             modal.style.display = isOpen ? 'none' : 'block';
             if (!isOpen) {
-                // By default show all sections if opened via toolbar
                 document.getElementById('sod-section-S').style.display = 'block';
                 document.getElementById('sod-section-O').style.display = 'block';
                 document.getElementById('sod-section-D').style.display = 'block';
-                document.getElementById('picker-target-info').innerText = 'FMEA SOD REFERENCE GUIDE';
+                document.getElementById('picker-target-info').innerText = 'FMEA SOD REFERENCE GUIDE (SIMPLIFIED)';
                 window.state.picker = { rowId: null, field: null };
                 renderSODTables();
             }
@@ -538,13 +617,15 @@
             const modal = document.getElementById('sod-modal');
             modal.style.display = 'block';
             
-            // Hide irrelevant sections
-            const type = field.toUpperCase().includes('S') ? 'S' : field.toUpperCase().includes('O') ? 'O' : 'D';
+            const fieldUpper = field.toUpperCase();
+            const type = fieldUpper.includes('S') ? 'S' : fieldUpper.includes('O') ? 'O' : 'D';
+            
             document.getElementById('sod-section-S').style.display = type === 'S' ? 'block' : 'none';
             document.getElementById('sod-section-O').style.display = type === 'O' ? 'block' : 'none';
             document.getElementById('sod-section-D').style.display = type === 'D' ? 'block' : 'none';
             
-            document.getElementById('picker-target-info').innerText = `Selecting ${type} rating for row ${window.state.rows.findIndex(r => r.id === rowId) + 1}`;
+            const rowIdx = window.state.rows.findIndex(r => r.id === rowId) + 1;
+            document.getElementById('picker-target-info').innerText = `Select ${type} rank for Analysis Row ${rowIdx}`;
             
             renderSODTables();
         };
@@ -552,7 +633,7 @@
         window.selectRating = function(value) {
             if (window.state.picker.rowId) {
                 window.updateRowVal(window.state.picker.rowId, window.state.picker.field, value);
-                window.toggleSOD();
+                window.toggleSOD(); 
             }
         };
 
@@ -565,8 +646,8 @@
                     tr.className = `rating-${item.r} clickable-sod-row`;
                     tr.onclick = () => window.selectRating(item.r);
                     tr.innerHTML = `
-                        <td class="font-black text-center border-r border-white/20">${item.r}</td>
-                        <td class="font-bold border-r border-white/20">${item.i}</td>
+                        <td class="font-black text-center border-r border-black/10">${item.r}</td>
+                        <td class="font-bold border-r border-black/10">${item.i}</td>
                         <td class="font-medium">${item.d}</td>
                     `;
                     body.appendChild(tr);
