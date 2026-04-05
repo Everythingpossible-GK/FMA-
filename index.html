@@ -30,14 +30,14 @@
             border-collapse: collapse;
             background: white;
             table-layout: fixed;
-            min-width: 2800px;
+            min-width: 2600px;
         }
 
         .fmea-table th { 
             background: #0f172a;
             color: white;
             font-weight: 800; 
-            font-size: 13px; 
+            font-size: 12px; 
             text-transform: uppercase; 
             padding: 10px 8px; 
             border: 1px solid #334155;
@@ -50,26 +50,26 @@
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
-            height: 110px;
+            height: 150px; 
             vertical-align: top;
         }
         
         textarea { 
             width: 100%; 
             height: 100%; 
-            padding: 12px; 
-            font-size: 14px; 
+            padding: 8px; 
+            font-size: 13px; 
             background: transparent; 
             border: none; 
             resize: none; 
             outline: none; 
             display: block;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         
         textarea:focus { background: #f8fafc; }
         
-        /* Center Alignment Classes */
+        /* Cell Layouts */
         .centered-cell {
             display: flex;
             align-items: center;
@@ -77,29 +77,40 @@
             height: 100%;
             width: 100%;
             text-align: center;
-            padding: 4px;
         }
 
-        /* Special container for Action Result cell to stack Status and Text */
-        .action-result-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* Action Plan Nested Table */
+        .action-sub-table {
             width: 100%;
-            padding: 8px;
-            gap: 4px;
+            border-collapse: collapse;
+            font-size: 11px;
         }
-
-        /* Editable Heading Style */
-        .editable-label {
+        .action-sub-table td {
+            border: none !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            padding: 4px !important;
+            height: auto !important;
+        }
+        .action-input {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 4px;
+            font-size: 11px;
             outline: none;
-            cursor: text;
-            display: block;
-            min-height: 1.2em;
         }
-        .editable-label:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
+        .action-input:focus { border-color: #3b82f6; background: white; }
+
+        /* SOD Footer in Results */
+        .sod-footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            margin-top: 8px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 8px;
+            flex-shrink: 0;
         }
 
         /* Rating Picker Button Style */
@@ -110,30 +121,24 @@
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 32px;
+            font-size: 28px;
             cursor: pointer;
             transition: all 0.2s;
             user-select: none;
+            line-height: 1;
+        }
+        .small-picker {
+            height: 50px; 
+            font-size: 24px;
+            border-radius: 4px;
         }
         .rating-picker:hover {
             filter: brightness(0.9);
             transform: scale(0.98);
         }
         
-        /* Date Input Styling */
-        input[type="date"] {
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            background: #f8fafc;
-            outline: none;
-            width: 90%;
-        }
-
-        /* Colors */
+        /* Colors & Empty State */
+        .rating-none { background-color: #f1f5f9; color: #cbd5e1; }
         .rating-1 { background-color: #93e093; color: #064e3b; }
         .rating-2 { background-color: #a7e8a7; color: #064e3b; }
         .rating-3 { background-color: #bcf0bc; color: #064e3b; }
@@ -162,7 +167,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px; 
+            font-size: 28px;
         }
         
         .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
@@ -175,7 +180,6 @@
             background: #cbd5e1;
         }
 
-        /* SOD Modal Styling */
         #sod-modal {
             display: none;
             position: fixed;
@@ -190,14 +194,13 @@
         .sod-content {
             background: white;
             width: 95%;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 2% auto;
             border-radius: 12px;
             height: 90vh;
             overflow-y: auto;
             padding: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid #e2e8f0;
         }
         .sod-table-ref {
             width: 100%;
@@ -211,25 +214,9 @@
             text-align: left;
             position: sticky;
             top: 0;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
-        .sod-table-ref tr.clickable-sod-row {
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .sod-table-ref tr.clickable-sod-row:hover {
-            filter: brightness(1.1);
-            outline: 3px solid #3b82f6;
-            transform: scale(1.005);
-            z-index: 10;
-        }
-        .sod-table-ref td {
-            padding: 16px 12px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            line-height: 1.4;
-        }
+        .sod-table-ref tr.clickable-sod-row { cursor: pointer; transition: all 0.15s; }
+        .sod-table-ref tr.clickable-sod-row:hover { filter: brightness(1.1); outline: 3px solid #3b82f6; }
 
         ::-webkit-scrollbar { width: 12px; height: 12px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -239,7 +226,6 @@
 <body>
 
     <div class="app-shell">
-        <!-- Top Toolbar -->
         <header class="h-14 bg-slate-900 text-white flex items-center justify-between px-6 shrink-0 z-[100]">
             <div class="flex items-center gap-3">
                 <i data-lucide="shield-check" class="text-blue-500 w-5 h-5"></i>
@@ -251,62 +237,42 @@
                     <span id="sync-text">System Active</span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="window.toggleSOD()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
+                    <button onclick="window.toggleSOD()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
                         <i data-lucide="book-open" class="w-4 h-4"></i> SOD Tables
                     </button>
-                    <button onclick="window.downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
+                    <button onclick="window.downloadExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
                         <i data-lucide="download" class="w-4 h-4"></i> Download Report
                     </button>
-                    <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded font-black text-xs uppercase transition-all active:scale-95 flex items-center gap-2 shadow-lg">
+                    <button onclick="window.addRow()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded font-black text-xs uppercase transition-all flex items-center gap-2 shadow-lg">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Row
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- Metadata Section -->
+        <!-- Metadata -->
         <div class="bg-white border-b border-slate-300 p-3 shrink-0">
             <div class="grid grid-cols-4 gap-2 mb-2">
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_system">System / Product / Process</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase">System / Product / Process</label>
                     <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_id">FMEA ID</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase">FMEA ID</label>
                     <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_rev">Revision</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase">Revision</label>
                     <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
                 <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_date">Date</label>
+                    <label class="block text-[10px] font-black text-slate-500 uppercase">Date</label>
                     <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
                 </div>
             </div>
-            <div class="grid grid-cols-4 gap-2 mb-2">
-                <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_subsystem">Subsystem / Product / Process</label>
-                    <input type="text" id="meta-subsystem" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
-                </div>
-                <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_resp">Party Responsible</label>
-                    <input type="text" id="meta-responsible" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
-                </div>
-                <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_approved">Approved By</label>
-                    <input type="text" id="meta-approved" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
-                </div>
-                <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_compDate">Date Completed</label>
-                    <input type="date" id="meta-completedDate" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none">
-                </div>
-            </div>
-            <div class="grid grid-cols-1">
-                <div class="header-box p-2 rounded">
-                    <label contenteditable="true" class="editable-label block text-[10px] font-black text-slate-500 uppercase" data-field="label_team">Team</label>
-                    <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none" placeholder="List team members...">
-                </div>
+            <div class="header-box p-2 rounded w-full">
+                <label class="block text-[10px] font-black text-slate-500 uppercase">Team Members</label>
+                <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-sm font-bold outline-none" placeholder="Enter team list...">
             </div>
         </div>
 
@@ -316,31 +282,23 @@
                 <thead>
                     <tr>
                         <th style="width: 60px">ID</th>
-                        <th style="width: 250px"><span contenteditable="true" class="editable-label" data-field="col_step">System / Item / Process Step</span></th>
-                        <th style="width: 250px"><span contenteditable="true" class="editable-label" data-field="col_func">Function</span></th>
-                        <th style="width: 320px"><span contenteditable="true" class="editable-label" data-field="col_mode">Potential Failure Mode</span></th>
-                        <th style="width: 320px"><span contenteditable="true" class="editable-label" data-field="col_effects">Effects of Failure</span></th>
-                        <th style="width: 80px"><span contenteditable="true" class="editable-label" data-field="col_sev">Severity</span></th>
-                        <th style="width: 320px"><span contenteditable="true" class="editable-label" data-field="col_causes">Causes</span></th>
-                        <th style="width: 80px"><span contenteditable="true" class="editable-label" data-field="col_occ">Occur</span></th>
-                        <th style="width: 320px"><span contenteditable="true" class="editable-label" data-field="col_controls">Current Controls</span></th>
-                        <th style="width: 80px"><span contenteditable="true" class="editable-label" data-field="col_det">Detect</span></th>
-                        <th style="width: 90px"><span contenteditable="true" class="editable-label" data-field="col_rpn">RPN</span></th>
-                        <th style="width: 320px"><span contenteditable="true" class="editable-label" data-field="col_actions">Recommended Actions</span></th>
-                        <th style="width: 220px"><span contenteditable="true" class="editable-label" data-field="col_owner">Owner</span></th>
-                        <th style="width: 160px"><span contenteditable="true" class="editable-label" data-field="col_due">Date Due</span></th>
-                        <th style="width: 250px" class="results-header"><span contenteditable="true" class="editable-label" data-field="col_res_act">Action Results</span></th>
-                        <th style="width: 160px" class="results-header"><span contenteditable="true" class="editable-label" data-field="col_res_date">Date Completed</span></th>
-                        <th style="width: 80px" class="results-header">Sev</th>
-                        <th style="width: 80px" class="results-header">Occ</th>
-                        <th style="width: 80px" class="results-header">Det</th>
-                        <th style="width: 90px" class="results-header">RPN</th>
-                        <th style="width: 70px"></th>
+                        <th style="width: 200px">System / Step</th>
+                        <th style="width: 200px">Function</th>
+                        <th style="width: 250px">Failure Mode</th>
+                        <th style="width: 250px">Effects</th>
+                        <th style="width: 70px">S</th>
+                        <th style="width: 250px">Causes</th>
+                        <th style="width: 70px">O</th>
+                        <th style="width: 250px">Controls</th>
+                        <th style="width: 70px">D</th>
+                        <th style="width: 90px">RPN</th>
+                        <th style="width: 450px">Action Plan (No, Task, Owner, Deadline, Status)</th>
+                        <th style="width: 320px" class="results-header">Action Results (Outcome & New SOD)</th>
+                        <th style="width: 90px" class="results-header">New RPN</th>
+                        <th style="width: 50px"></th>
                     </tr>
                 </thead>
-                <tbody id="fmea-body">
-                    <!-- JavaScript will fill this -->
-                </tbody>
+                <tbody id="fmea-body"></tbody>
             </table>
         </div>
     </div>
@@ -349,110 +307,32 @@
     <div id="sod-modal">
         <div class="sod-content">
             <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight">SOD Picker - Select Rank</h2>
-                    <p id="picker-target-info" class="text-blue-600 font-bold uppercase text-xs">Click a row to pick that value</p>
-                </div>
-                <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+                <h2 class="text-2xl font-black text-slate-900 uppercase">SOD Picker</h2>
+                <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="x"></i></button>
             </div>
-            
-            <div class="space-y-12">
-                <!-- Severity -->
-                <section id="sod-section-S">
-                    <h3 class="text-lg font-bold mb-3 text-blue-800 border-b-2 border-blue-100 pb-1">1. Severity (S) – "How much does it hurt?"</h3>
-                    <p class="text-xs text-slate-500 mb-2 italic">Ask: If this fails, how bad is the consequence?</p>
-                    <table class="sod-table-ref">
-                        <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Impact</th><th>Simple Definition</th></tr>
-                        </thead>
-                        <tbody id="sod-s-body"></tbody>
-                    </table>
-                </section>
-
-                <!-- Occurrence -->
-                <section id="sod-section-O">
-                    <h3 class="text-lg font-bold mb-3 text-amber-800 border-b-2 border-amber-100 pb-1">2. Occurrence (O) – "How often does it happen?"</h3>
-                    <p class="text-xs text-slate-500 mb-2 italic">Ask: What are the odds of this failure actually occurring?</p>
-                    <table class="sod-table-ref">
-                        <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Frequency</th><th>Simple Definition</th></tr>
-                        </thead>
-                        <tbody id="sod-o-body"></tbody>
-                    </table>
-                </section>
-
-                <!-- Detection -->
-                <section id="sod-section-D">
-                    <h3 class="text-lg font-bold mb-3 text-emerald-800 border-b-2 border-emerald-100 pb-1">3. Detection (D) – "Will we catch it?"</h3>
-                    <p class="text-xs text-slate-500 mb-2 italic">Ask: If it fails, how likely are we to find it before it reaches the customer?</p>
-                    <table class="sod-table-ref">
-                        <thead>
-                            <tr><th class="w-16">Rank</th><th class="w-48">Detection</th><th>Simple Definition</th></tr>
-                        </thead>
-                        <tbody id="sod-d-body"></tbody>
-                    </table>
-                </section>
+            <div class="space-y-8">
+                <section id="sod-section-S"><h3 class="font-bold text-blue-800 mb-2 underline">1. Severity (S)</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Rank</th><th class="w-32">Impact</th><th>Definition</th></tr></thead><tbody id="sod-s-body"></tbody></table></section>
+                <section id="sod-section-O"><h3 class="font-bold text-amber-800 mb-2 underline">2. Occurrence (O)</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Rank</th><th class="w-32">Frequency</th><th>Definition</th></tr></thead><tbody id="sod-o-body"></tbody></table></section>
+                <section id="sod-section-D"><h3 class="font-bold text-emerald-800 mb-2 underline">3. Detection (D)</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Rank</th><th class="w-32">Detection</th><th>Definition</th></tr></thead><tbody id="sod-d-body"></tbody></table></section>
             </div>
         </div>
     </div>
 
-    <!-- Core Script Logic (NOT MODULE) -->
     <script>
-        // Simplified SOD Data from User Request
         const SOD_DATA = {
-            S: [
-                { r: 10, i: "Danger", d: "Very high risk. Someone could get hurt or you are breaking the law." },
-                { r: 9, i: "Danger", d: "Very high risk. Someone could get hurt or you are breaking the law." },
-                { r: 8, i: "Major", d: "The machine/part is dead. The customer will be very angry." },
-                { r: 7, i: "Major", d: "The machine/part is dead. The customer will be very angry." },
-                { r: 6, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
-                { r: 5, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
-                { r: 4, i: "Moderate", d: "It still works, but not well. Performance is down, or it’s very noisy." },
-                { r: 3, i: "Minor", d: "A small nuisance. A slight wrap-up or scratch, but it still functions." },
-                { r: 2, i: "Minor", d: "A small nuisance. A slight wrap-up or scratch, but it still functions." },
-                { r: 1, i: "None", d: "No one will even notice." }
-            ],
-            O: [
-                { r: 10, i: "Constant", d: "It happens all the time (daily or every few cycles)." },
-                { r: 9, i: "Constant", d: "It happens all the time (daily or every few cycles)." },
-                { r: 8, i: "Frequent", d: "It happens regularly (once a week or once a month)." },
-                { r: 7, i: "Frequent", d: "It happens regularly (once a week or once a month)." },
-                { r: 6, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
-                { r: 5, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
-                { r: 4, i: "Occasional", d: "It happens sometimes, but it isn't \"normal.\"" },
-                { r: 3, i: "Rare", d: "It has happened before, but very rarely." },
-                { r: 2, i: "Rare", d: "It has happened before, but very rarely." },
-                { r: 1, i: "Unlikely", d: "It has almost never happened in the history of this part." }
-            ],
-            D: [
-                { r: 10, i: "Impossible", d: "We are \"blind.\" There is no way to see the failure until it's too late." },
-                { r: 9, i: "Impossible", d: "We are \"blind.\" There is no way to see the failure until it's too late." },
-                { r: 8, i: "Low", d: "We might catch it if a human is lucky and looks at the right spot." },
-                { r: 7, i: "Low", d: "We might catch it if a human is lucky and looks at the right spot." },
-                { r: 6, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
-                { r: 5, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
-                { r: 4, i: "Medium", d: "We have a manual check or a periodic inspection in place." },
-                { r: 3, i: "High", d: "We have sensors or automatic alarms that catch it most of the time." },
-                { r: 2, i: "High", d: "We have sensors or automatic alarms that catch it most of the time." },
-                { r: 1, i: "Certain", d: "The system automatically stops if this happens (Poka-yoke)." }
-            ]
+            S: [{r:10,i:"Danger",d:"Someone could get hurt or you are breaking the law."}, {r:9,i:"Danger",d:"Someone could get hurt."}, {r:8,i:"Major",d:"Machine is dead. Customer very angry."}, {r:7,i:"Major",d:"Part is dead."}, {r:6,i:"Moderate",d:"Works but performance is down."}, {r:5,i:"Moderate",d:"Performance issues."}, {r:4,i:"Moderate",d:"Noisy."}, {r:3,i:"Minor",d:"Small nuisance."}, {r:2,i:"Minor",d:"Scratch/Mark."}, {r:1,i:"None",d:"Not noticed."}],
+            O: [{r:10,i:"Constant",d:"Happens daily."}, {r:9,i:"Constant",d:"Happens every few cycles."}, {r:8,i:"Frequent",d:"Once a week."}, {r:7,i:"Frequent",d:"Once a month."}, {r:6,i:"Occasional",d:"Happens sometimes."}, {r:5,i:"Occasional",d:"Not normal frequency."}, {r:4,i:"Occasional",d:"Seen before."}, {r:3,i:"Rare",d:"Happened before, very rarely."}, {r:2,i:"Rare",d:"Highly unlikely."}, {r:1,i:"Unlikely",d:"Never happened."}],
+            D: [{r:10,i:"Impossible",d:"No way to see failure."}, {r:9,i:"Impossible",d:"Blind to it."}, {r:8,i:"Low",d:"Human check needed."}, {r:7,i:"Low",d:"Lucky to catch."}, {r:6,i:"Medium",d:"Periodic manual inspection."}, {r:5,i:"Medium",d:"Checklist in place."}, {r:4,i:"Medium",d:"Manual check."}, {r:3,i:"High",d:"Sensors/Alarms in place."}, {r:2,i:"High",d:"Caught most of the time."}, {r:1,i:"Certain",d:"System stops automatically."}]
         };
 
+        const createActionObj = () => ({ id: Date.now()+Math.random(), text: '', owner: '', due: '', status: 'Not Started' });
         const createRowObj = () => ({
             id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            step: '', func: '', mode: '', effects: '', s: 1, causes: '', o: 1, controls: '', d: 1,
-            recActions: '', owner: '', dateDue: '',
-            status: 'Not Started', actionResults: '', dateComp: '', resS: 1, resO: 1, resD: 1
+            step: '', func: '', mode: '', effects: '', s: null, causes: '', o: null, controls: '', d: null,
+            actions: [createActionObj()], resultText: '', resultDate: '', resS: null, resO: null, resD: null
         });
 
-        window.state = {
-            metadata: {},
-            headings: {},
-            rows: [createRowObj()],
-            picker: { rowId: null, field: null } 
-        };
+        window.state = { metadata: {}, rows: [createRowObj()], picker: { rowId: null, field: null } };
 
         window.render = function() {
             const container = document.getElementById('fmea-body');
@@ -462,258 +342,153 @@
             window.state.rows.forEach((row, idx) => {
                 const tr = document.createElement('tr');
                 
-                const getRatingPickerHTML = (field, val) => {
-                    return `<div class="rating-picker rating-${val}" onclick="window.openPicker('${row.id}', '${field}')">${val}</div>`;
+                const getRatingPicker = (field, val, isSmall=false) => {
+                    const display = val === null ? '-' : val;
+                    const ratingClass = val === null ? 'rating-none' : `rating-${val}`;
+                    return `<div class="rating-picker ${ratingClass} ${isSmall?'small-picker':''}" onclick="window.openPicker('${row.id}', '${field}')">${display}</div>`;
+                };
+                
+                const calculateRPN = (s, o, d) => {
+                    if (s === null || o === null || d === null) return '-';
+                    return s * o * d;
                 };
 
                 const statusOptions = ['Not Started', 'In Progress', 'Complete', 'Needs Review', 'Approved', 'Overdue', 'On Hold'];
                 const statusClass = 'status-' + (row.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
 
-                tr.innerHTML = `
-                    <td class="bg-slate-50 border-r border-slate-200">
-                        <div class="centered-cell font-black text-slate-400 text-sm">${idx + 1}</div>
-                    </td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step || ''}</textarea></td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func || ''}</textarea></td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode || ''}</textarea></td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects || ''}</textarea></td>
-                    <td>${getRatingPickerHTML('s', row.s)}</td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes || ''}</textarea></td>
-                    <td>${getRatingPickerHTML('o', row.o)}</td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls || ''}</textarea></td>
-                    <td>${getRatingPickerHTML('d', row.d)}</td>
-                    <td class="bg-slate-50 border-x border-slate-200">
-                        <div class="rpn-col">${(row.s || 1) * (row.o || 1) * (row.d || 1)}</div>
-                    </td>
-                    <td><textarea class="font-bold text-blue-700" oninput="window.updateRowVal('${row.id}', 'recActions', this.value)">${row.recActions || ''}</textarea></td>
-                    <td><textarea oninput="window.updateRowVal('${row.id}', 'owner', this.value)">${row.owner || ''}</textarea></td>
-                    
-                    <td>
-                        <div class="centered-cell">
-                            <input type="date" value="${row.dateDue || ''}" onchange="window.updateRowVal('${row.id}', 'dateDue', this.value)">
-                        </div>
-                    </td>
-                    
-                    <td class="bg-blue-50/10">
-                        <div class="action-result-container">
-                            <select class="${statusClass} w-full text-[11px] h-8 rounded-md border border-slate-300 font-bold uppercase px-2 shadow-sm" onchange="window.updateRowVal('${row.id}', 'status', this.value)">
-                                ${statusOptions.map(opt => `<option value="${opt}" ${row.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                let actionsHTML = `<table class="action-sub-table">
+                    <thead><tr><th class="w-8">#</th><th>Action Item</th><th class="w-24">Owner</th><th class="w-24">Due</th><th class="w-24">Status</th></tr></thead>
+                    <tbody>`;
+                row.actions.forEach((act, aIdx) => {
+                    actionsHTML += `<tr>
+                        <td class="text-center font-bold">${aIdx+1}</td>
+                        <td><input type="text" class="action-input" value="${act.text}" oninput="window.updateAction('${row.id}', '${act.id}', 'text', this.value)"></td>
+                        <td><input type="text" class="action-input" value="${act.owner}" oninput="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
+                        <td><input type="date" class="action-input" value="${act.due}" onchange="window.updateAction('${row.id}', '${act.id}', 'due', this.value)"></td>
+                        <td>
+                            <select class="action-input status-${act.status.toLowerCase().replace(/\s+/g, '-')}" onchange="window.updateAction('${row.id}', '${act.id}', 'status', this.value)">
+                                ${['Not Started', 'In Progress', 'Complete', 'Needs Review', 'Approved', 'Overdue', 'On Hold'].map(s => `<option value="${s}" ${act.status===s?'selected':''}>${s}</option>`).join('')}
                             </select>
-                            <textarea class="grow !p-2 !text-xs border border-slate-200 rounded-md bg-white shadow-inner" placeholder="Result details..." oninput="window.updateRowVal('${row.id}', 'actionResults', this.value)">${row.actionResults || ''}</textarea>
+                        </td>
+                    </tr>`;
+                });
+                actionsHTML += `</tbody></table>
+                <button onclick="window.addAction('${row.id}')" class="text-[10px] font-black text-blue-600 p-2 uppercase flex items-center gap-1 hover:bg-blue-50 rounded mt-1">
+                    <i data-lucide="plus" class="w-3 h-3"></i> Add Action Row
+                </button>`;
+
+                tr.innerHTML = `
+                    <td class="bg-slate-50"><div class="centered-cell font-black text-slate-400 text-sm">${idx + 1}</div></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'func', this.value)">${row.func}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode}</textarea></td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects}</textarea></td>
+                    <td>${getRatingPicker('s', row.s)}</td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes}</textarea></td>
+                    <td>${getRatingPicker('o', row.o)}</td>
+                    <td><textarea oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls}</textarea></td>
+                    <td>${getRatingPicker('d', row.d)}</td>
+                    <td class="bg-slate-50 border-x border-slate-200"><div class="rpn-col">${calculateRPN(row.s, row.o, row.d)}</div></td>
+                    <td class="p-2">${actionsHTML}</td>
+                    <td class="bg-blue-50/10 p-2 flex flex-col h-full">
+                        <textarea class="flex-grow !h-20 border border-slate-200 rounded mb-1 bg-white" placeholder="Outcome summary..." oninput="window.updateRowVal('${row.id}', 'resultText', this.value)">${row.resultText}</textarea>
+                        <input type="date" class="action-input mb-1" value="${row.resultDate}" onchange="window.updateRowVal('${row.id}', 'resultDate', this.value)">
+                        <div class="sod-footer-grid">
+                            ${getRatingPicker('resS', row.resS, true)}
+                            ${getRatingPicker('resO', row.resO, true)}
+                            ${getRatingPicker('resD', row.resD, true)}
                         </div>
                     </td>
-                    
-                    <td class="bg-blue-50/10">
-                        <div class="centered-cell">
-                            <input type="date" value="${row.dateComp || ''}" onchange="window.updateRowVal('${row.id}', 'dateComp', this.value)">
-                        </div>
-                    </td>
-                    
-                    <td>${getRatingPickerHTML('resS', row.resS)}</td>
-                    <td>${getRatingPickerHTML('resO', row.resO)}</td>
-                    <td>${getRatingPickerHTML('resD', row.resD)}</td>
-                    
-                    <td class="bg-blue-100 border-x border-slate-200">
-                        <div class="rpn-col bg-transparent">${(row.resS || 1) * (row.resO || 1) * (row.resD || 1)}</div>
-                    </td>
-                    
-                    <td class="bg-slate-50">
-                        <div class="centered-cell">
-                            <button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500 transition-colors">
-                                <i data-lucide="trash-2" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    </td>
+                    <td class="bg-blue-100 border-x border-slate-200"><div class="rpn-col bg-transparent">${calculateRPN(row.resS, row.resO, row.resD)}</div></td>
+                    <td class="bg-slate-50"><div class="centered-cell"><button onclick="window.deleteRow('${row.id}')" class="p-2 text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td>
                 `;
                 container.appendChild(tr);
             });
-            
-            if (window.lucide) window.lucide.createIcons();
+            lucide.createIcons();
         };
 
-        window.addRow = function() {
-            window.state.rows.push(createRowObj());
-            window.render();
-            if (window.saveToCloud) window.saveToCloud();
-            const vp = document.getElementById('viewport');
-            vp.scrollTop = vp.scrollHeight;
+        window.addRow = () => { window.state.rows.push(createRowObj()); window.render(); window.saveToCloud?.(); };
+        window.addAction = (rid) => { window.state.rows.find(r=>r.id===rid).actions.push(createActionObj()); window.render(); window.saveToCloud?.(); };
+        window.deleteRow = (rid) => { window.state.rows = window.state.rows.filter(r=>r.id!==rid); if(!window.state.rows.length) window.state.rows=[createRowObj()]; window.render(); window.saveToCloud?.(); };
+        window.updateRowVal = (rid, f, v) => { window.state.rows.find(r=>r.id===rid)[f] = v; if(['s','o','d','resS','resO','resD'].includes(f)) window.render(); window.saveToCloud?.(); };
+        window.updateAction = (rid, aid, f, v) => { window.state.rows.find(r=>r.id===rid).actions.find(a=>a.id==aid)[f] = v; if(f==='status') window.render(); window.saveToCloud?.(); };
+        window.updateMeta = () => { 
+            window.state.metadata = { system: document.getElementById('meta-system').value, id: document.getElementById('meta-id').value, rev: document.getElementById('meta-rev').value, date: document.getElementById('meta-date').value, team: document.getElementById('meta-team').value };
+            window.saveToCloud?.(); 
         };
 
-        window.deleteRow = function(id) {
-            window.state.rows = window.state.rows.filter(r => r.id !== id);
-            if (window.state.rows.length === 0) window.state.rows = [createRowObj()];
-            window.render();
-            if (window.saveToCloud) window.saveToCloud();
+        window.toggleSOD = () => {
+            const m = document.getElementById('sod-modal');
+            const show = m.style.display !== 'block';
+            m.style.display = show ? 'block' : 'none';
+            if(show) renderSODTables();
         };
 
-        window.updateRowVal = function(id, field, val) {
-            const row = window.state.rows.find(r => r.id === id);
-            if (!row) return;
-            row[field] = val;
-            if (['s', 'o', 'd', 'resS', 'resO', 'resD', 'status'].includes(field)) window.render();
-            if (window.saveToCloud) window.saveToCloud();
-        };
-
-        window.updateMeta = function() {
-            window.state.metadata = {
-                system: document.getElementById('meta-system').value,
-                id: document.getElementById('meta-id').value,
-                rev: document.getElementById('meta-rev').value,
-                date: document.getElementById('meta-date').value,
-                subsystem: document.getElementById('meta-subsystem').value,
-                responsible: document.getElementById('meta-responsible').value,
-                approved: document.getElementById('meta-approved').value,
-                completedDate: document.getElementById('meta-completedDate').value,
-                team: document.getElementById('meta-team').value
-            };
-            if (window.saveToCloud) window.saveToCloud();
-        };
-
-        window.downloadExcel = function() {
-            const rows = window.state.rows;
-            const meta = window.state.metadata;
-            const escape = (str) => {
-                if (typeof str !== 'string') return str;
-                return `"${str.replace(/"/g, '""')}"`;
-            };
-
-            let csv = "FMEA REPORT\n";
-            csv += `System,${escape(meta.system)},ID,${escape(meta.id)},Revision,${escape(meta.rev)},Date,${escape(meta.date)}\n`;
-            csv += `Subsystem,${escape(meta.subsystem)},Responsible,${escape(meta.responsible)},Approved By,${escape(meta.approved)},Comp Date,${escape(meta.completedDate)}\n`;
-            csv += `Team,${escape(meta.team)}\n\n`;
-            csv += "ID,Item/Step,Function,Failure Mode,Effects,S,Causes,O,Controls,D,RPN,Actions,Owner,Due Date,Results/Status,Comp Date,Res S,Res O,Res D,Res RPN\n";
-            
-            rows.forEach((r, i) => {
-                csv += [
-                    i + 1,
-                    escape(r.step), escape(r.func), escape(r.mode), escape(r.effects), r.s, escape(r.causes), r.o, escape(r.controls), r.d, (r.s * r.o * r.d), escape(r.recActions), escape(r.owner), escape(r.dateDue), escape(r.status + ": " + r.actionResults), escape(r.dateComp), r.resS, r.resO, r.resD, (r.resS * r.resO * r.resD)
-                ].join(",") + "\n";
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `FMEA_Report_${meta.id || 'export'}.csv`);
-            link.click();
-        };
-
-        window.toggleSOD = function() {
-            const modal = document.getElementById('sod-modal');
-            const isOpen = modal.style.display === 'block';
-            modal.style.display = isOpen ? 'none' : 'block';
-            if (!isOpen) {
-                document.getElementById('sod-section-S').style.display = 'block';
-                document.getElementById('sod-section-O').style.display = 'block';
-                document.getElementById('sod-section-D').style.display = 'block';
-                document.getElementById('picker-target-info').innerText = 'FMEA SOD REFERENCE GUIDE (SIMPLIFIED)';
-                window.state.picker = { rowId: null, field: null };
-                renderSODTables();
-            }
-        };
-
-        window.openPicker = function(rowId, field) {
-            window.state.picker = { rowId, field };
-            const modal = document.getElementById('sod-modal');
-            modal.style.display = 'block';
-            
-            const fieldUpper = field.toUpperCase();
-            const type = fieldUpper.includes('S') ? 'S' : fieldUpper.includes('O') ? 'O' : 'D';
-            
-            document.getElementById('sod-section-S').style.display = type === 'S' ? 'block' : 'none';
-            document.getElementById('sod-section-O').style.display = type === 'O' ? 'block' : 'none';
-            document.getElementById('sod-section-D').style.display = type === 'D' ? 'block' : 'none';
-            
-            const rowIdx = window.state.rows.findIndex(r => r.id === rowId) + 1;
-            document.getElementById('picker-target-info').innerText = `Select ${type} rank for Analysis Row ${rowIdx}`;
-            
+        window.openPicker = (rid, f) => {
+            window.state.picker = { rowId: rid, field: f };
+            const type = f.toUpperCase().includes('S')?'S':f.toUpperCase().includes('O')?'O':'D';
+            document.getElementById('sod-modal').style.display = 'block';
+            ['S','O','D'].forEach(t => document.getElementById(`sod-section-${t}`).style.display = t===type?'block':'none');
             renderSODTables();
         };
 
-        window.selectRating = function(value) {
-            if (window.state.picker.rowId) {
-                window.updateRowVal(window.state.picker.rowId, window.state.picker.field, value);
-                window.toggleSOD(); 
-            }
-        };
-
         function renderSODTables() {
-            const renderBody = (type, bodyId) => {
-                const body = document.getElementById(bodyId);
-                body.innerHTML = '';
-                SOD_DATA[type].forEach(item => {
+            const drawBody = (t, bid) => {
+                const b = document.getElementById(bid); b.innerHTML = '';
+                SOD_DATA[t].forEach(item => {
                     const tr = document.createElement('tr');
                     tr.className = `rating-${item.r} clickable-sod-row`;
-                    tr.onclick = () => window.selectRating(item.r);
-                    tr.innerHTML = `
-                        <td class="font-black text-center border-r border-black/10">${item.r}</td>
-                        <td class="font-bold border-r border-black/10">${item.i}</td>
-                        <td class="font-medium">${item.d}</td>
-                    `;
-                    body.appendChild(tr);
+                    tr.onclick = () => { window.updateRowVal(window.state.picker.rowId, window.state.picker.field, item.r); window.toggleSOD(); };
+                    tr.innerHTML = `<td class="font-black text-center border-r border-black/10">${item.r}</td><td class="font-bold border-r border-black/10">${item.i}</td><td class="font-medium">${item.d}</td>`;
+                    b.appendChild(tr);
                 });
             };
-            renderBody('S', 'sod-s-body');
-            renderBody('O', 'sod-o-body');
-            renderBody('D', 'sod-d-body');
-            if (window.lucide) window.lucide.createIcons();
+            drawBody('S','sod-s-body'); drawBody('O','sod-o-body'); drawBody('D','sod-d-body');
+            lucide.createIcons();
         }
 
-        document.addEventListener('input', (e) => {
-            if (e.target.classList.contains('editable-label')) {
-                const field = e.target.dataset.field;
-                window.state.headings[field] = e.target.innerText;
-                if (window.saveToCloud) window.saveToCloud();
-            }
-        });
+        window.downloadExcel = () => {
+            let csv = "ID,Step,Function,Failure Mode,Effects,S,Causes,O,Controls,D,RPN,Actions,Outcome,New RPN\n";
+            window.state.rows.forEach((r, i) => {
+                const actionsStr = r.actions.map(a => `${a.text} (${a.owner}, ${a.status})`).join(" | ");
+                csv += `"${i+1}","${r.step}","${r.func}","${r.mode}","${r.effects}","${r.s||''}","${r.causes}","${r.o||''}","${r.controls}","${r.d||''}","${(r.s&&r.o&&r.d)?r.s*r.o*r.d:''}","${actionsStr}","${r.resultText}","${(r.resS&&r.resO&&r.resD)?r.resS*r.resO*r.resD:''}"\n`;
+            });
+            const b = new Blob([csv], {type:'text/csv'}); const u = URL.createObjectURL(b);
+            const a = document.createElement('a'); a.href = u; a.download = 'fmea_report.csv'; a.click();
+        };
 
         window.render();
     </script>
 
-    <!-- Cloud Persistence Module -->
+    <!-- Persistence -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v8-editable';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-multi-action-v1';
 
-        window.saveToCloud = async function() {
-            if (!auth.currentUser) return;
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
-            } catch (e) {}
+        window.saveToCloud = async () => {
+            if(!auth.currentUser) return;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
         };
 
-        try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        } catch (e) {}
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+            else await signInAnonymously(auth);
+        };
+        initAuth();
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), (snap) => {
-                    if (snap.exists()) {
-                        window.state = snap.data();
-                        window.render();
-                        Object.entries(window.state.metadata || {}).forEach(([k, v]) => {
-                            const el = document.getElementById('meta-' + k);
-                            if (el) el.value = v;
-                        });
-                        Object.entries(window.state.headings || {}).forEach(([k, v]) => {
-                            const el = document.querySelector(`[data-field="${k}"]`);
-                            if (el && el.innerText !== v) el.innerText = v;
-                        });
-                    }
-                });
-            }
+        onAuthStateChanged(auth, u => {
+            if(u) onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), snap => {
+                if(snap.exists()){
+                    window.state = snap.data(); window.render();
+                    Object.entries(window.state.metadata || {}).forEach(([k,v]) => { const el = document.getElementById('meta-'+k); if(el) el.value=v; });
+                }
+            });
         });
     </script>
 </body>
