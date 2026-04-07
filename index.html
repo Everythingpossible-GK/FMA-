@@ -6,7 +6,6 @@
     <title>FMEA Spreadsheet Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Added html2pdf for direct PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -27,7 +26,6 @@
             width: 100vw;
         }
 
-        /* Table Styling */
         .fmea-table {
             border-collapse: collapse;
             background: white;
@@ -49,7 +47,7 @@
             text-align: center;
         }
 
-        /* Ultra-Compact Row Height adjusted to 60px */
+        /* Fixed Row Height: 60px */
         .fmea-table td { 
             border: 1px solid #e2e8f0; 
             padding: 0;
@@ -60,19 +58,18 @@
         textarea { 
             width: 100%; 
             height: 100%; 
-            padding: 3px 5px; 
+            padding: 4px 6px; 
             font-size: 11px; 
             background: transparent; 
             border: none; 
             resize: none; 
             outline: none; 
             display: block;
-            line-height: 1.25;
+            line-height: 1.3;
         }
         
         textarea:focus { background: #f8fafc; }
         
-        /* Dropdown Menu */
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -101,7 +98,6 @@
         }
         .dropdown-item:hover { background-color: #f8fafc; color: #2563eb; }
 
-        /* Rating Picker Colors */
         .rating-none { background-color: #f1f5f9; color: #cbd5e1; }
         .rating-none .ghost-val { opacity: 0.35; font-weight: 400; }
         .rating-1 { background-color: #93e093; color: #064e3b; }
@@ -129,20 +125,11 @@
 
         .results-header { background: #1a5276 !important; color: white !important; }
 
-        /* Standard Helpers */
-        .rating-picker {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 18px; cursor: pointer;
-            transition: all 0.2s; user-select: none; line-height: 1;
-        }
-        .small-picker { height: 26px; font-size: 14px; border-radius: 3px; }
-        .rating-picker:hover { filter: brightness(0.9); transform: scale(0.98); }
-
-        .action-sub-table { width: 100%; border-collapse: collapse; font-size: 9px; }
-        .action-sub-table th { background: #f1f5f9; color: #64748b; padding: 2px 4px; border: 1px solid #e2e8f0; position: static; height: auto; font-size: 9px; }
+        /* Action Item Table Font: 11px */
+        .action-sub-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .action-sub-table th { background: #f1f5f9; color: #64748b; padding: 2px 4px; border: 1px solid #e2e8f0; position: static; height: auto; font-size: 11px; }
         .action-sub-table td { border: 1px solid #f1f5f9 !important; padding: 1px 2px !important; height: auto !important; }
-        .action-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 3px; padding: 1px 3px; font-size: 9px; outline: none; }
+        .action-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 3px; padding: 2px 4px; font-size: 11px; outline: none; }
         
         .sod-footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-top: 2px; border-top: 1px solid #e2e8f0; padding-top: 2px; }
         
@@ -154,15 +141,21 @@
         .sod-table-ref { width: 100%; border-collapse: collapse; font-size: 14px; }
         .sod-table-ref th { background: #0f172a; color: white; padding: 12px; position: sticky; top: 0; }
         
-        /* Export Wrapper (Hidden) */
         #export-wrapper { display: none; }
 
-        /* Animation for Cloud Sync */
         @keyframes pulse-emerald {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
         .syncing-dot { animation: pulse-emerald 1s infinite; }
+
+        .rating-picker {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 18px; cursor: pointer;
+            transition: all 0.2s; user-select: none; line-height: 1;
+        }
+        .small-picker { height: 26px; font-size: 14px; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -196,7 +189,6 @@
                     <button onclick="window.triggerJSONUpload()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
                         <i data-lucide="upload" class="w-3 h-3"></i> Restore
                     </button>
-
                     <button onclick="window.toggleSOD()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
                         <i data-lucide="book-open" class="w-3 h-3"></i> SOD
                     </button>
@@ -220,30 +212,25 @@
             </div>
         </header>
 
-        <!-- Hidden input for JSON upload -->
         <input type="file" id="json-upload-input" accept=".json" style="display: none;" onchange="window.handleJSONUpload(event)">
 
-        <!-- Metadata Section -->
+        <!-- Metadata Section (No Part Cell) -->
         <div class="bg-white border-b border-slate-300 p-2 shrink-0 no-print">
-            <div class="grid grid-cols-5 gap-2">
+            <div class="grid grid-cols-4 gap-2">
                 <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">System Name</label>
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Equipment Name (e.g., EG-QC)</label>
                     <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
                 </div>
                 <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">FMEA ID</label>
-                    <input type="text" id="meta-id" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
-                </div>
-                <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">Revision</label>
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Owner Name</label>
                     <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
                 </div>
                 <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">Study Date</label>
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Study Date</label>
                     <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none">
                 </div>
                 <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase">Team Members</label>
+                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Team Members</label>
                     <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
                 </div>
             </div>
@@ -274,9 +261,6 @@
         </div>
     </div>
 
-    <!-- Container used for generating PDF/DOC/XLS off-screen -->
-    <div id="export-wrapper" style="position: absolute; left: -9999px; top: 0; width: 2000px;"></div>
-
     <!-- SOD Modal -->
     <div id="sod-modal">
         <div class="sod-content">
@@ -285,38 +269,72 @@
                 <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-8">
-                <section id="sod-section-S"><h3 class="font-bold text-blue-800 mb-2 underline">Severity (S)</h3><table class="sod-table-ref"><thead><tr><th>Rank</th><th>Impact</th><th>Definition</th></tr></thead><tbody id="sod-s-body"></tbody></table></section>
-                <section id="sod-section-O"><h3 class="font-bold text-amber-800 mb-2 underline">Occurrence (O)</h3><table class="sod-table-ref"><thead><tr><th>Rank</th><th>Frequency</th><th>Definition</th></tr></thead><tbody id="sod-o-body"></tbody></table></section>
-                <section id="sod-section-D"><h3 class="font-bold text-emerald-800 mb-2 underline">Detection (D)</h3><table class="sod-table-ref"><thead><tr><th>Rank</th><th>Detection</th><th>Definition</th></tr></thead><tbody id="sod-d-body"></tbody></table></section>
+                <section id="sod-section-S"><h3 class="font-bold text-red-800 mb-2 underline tracking-widest uppercase text-xs">Severity (S) — "How much does it hurt?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Impact</th><th>Definition</th></tr></thead><tbody id="sod-s-body"></tbody></table></section>
+                <section id="sod-section-O"><h3 class="font-bold text-amber-800 mb-2 underline tracking-widest uppercase text-xs">Occurrence (O) — "How often does it happen?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Frequency</th><th>Definition</th></tr></thead><tbody id="sod-o-body"></tbody></table></section>
+                <section id="sod-section-D"><h3 class="font-bold text-emerald-800 mb-2 underline tracking-widest uppercase text-xs">Detection (D) — "Will we catch it?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Detection</th><th>Definition</th></tr></thead><tbody id="sod-d-body"></tbody></table></section>
             </div>
         </div>
     </div>
 
+    <div id="export-wrapper"></div>
+
     <script>
         const SOD_DATA = {
             S: [
-                {r:10,i:"Hazardous",d:"Failure results in a major safety incident or fatality without warning."}, 
-                {r:9,i:"Serious",d:"Failure involves high risk of injury or major environmental breach."}, 
-                {r:8,i:"Extreme",d:"Total equipment breakdown. Complete production stoppage."}, 
-                {r:7,i:"Major",d:"Significant disruption. Inoperable for a full shift."}, 
-                {r:6,i:"Moderate",d:"Partial loss of function. Decreased performance but operational."}, 
-                {r:1,i:"None",d:"No discernible effect."}
+                {r:10,i:"Danger",d:"Very high risk. Someone could get hurt or you are breaking the law."},
+                {r:9,i:"Danger",d:"Very high risk. Someone could get hurt or you are breaking the law."},
+                {r:8,i:"Major",d:"The machine/part is dead. The customer will be very angry."},
+                {r:7,i:"Major",d:"The machine/part is dead. The customer will be very angry."},
+                {r:6,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
+                {r:5,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
+                {r:4,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
+                {r:3,i:"Minor",d:"A small nuisance. A slight wrap-up or scratch, but it still functions."},
+                {r:2,i:"Minor",d:"A small nuisance. A slight wrap-up or scratch, but it still functions."},
+                {r:1,i:"None",d:"No one will even notice."}
             ],
             O: [
-                {r:10,i:"Very High",d:"Inevitable failure. Happens multiple times per week."}, 
-                {r:9,i:"High",d:"Recurring problem. Likely once a week."}, 
-                {r:1,i:"Nearly Impossible",d:"Failure is eliminated through design or robust TPM."}
+                {r:10,i:"Constant",d:"It happens all the time (daily or every few cycles)."},
+                {r:9,i:"Constant",d:"It happens all the time (daily or every few cycles)."},
+                {r:8,i:"Frequent",d:"It happens regularly (once a week or once a month)."},
+                {r:7,i:"Frequent",d:"It happens regularly (once a week or once a month)."},
+                {r:6,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
+                {r:5,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
+                {r:4,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
+                {r:3,i:"Rare",d:"It has happened before, but very rarely."},
+                {r:2,i:"Rare",d:"It has happened before, but very rarely."},
+                {r:1,i:"Unlikely",d:"It has almost never happened in the history of this part."}
             ],
             D: [
-                {r:10,i:"Uncertain",d:"No controls. Failure cannot be detected until it happens."}, 
-                {r:1,i:"Almost Certain",d:"Poka-Yoke / foolproof detection systems."}
+                {r:10,i:"Impossible",d:"We are 'blind.' There is no way to see the failure until it's too late."},
+                {r:9,i:"Impossible",d:"We are 'blind.' There is no way to see the failure until it's too late."},
+                {r:8,i:"Low",d:"We might catch it if a human is lucky and looks at the right spot."},
+                {r:7,i:"Low",d:"We might catch it if a human is lucky and looks at the right spot."},
+                {r:6,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
+                {r:5,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
+                {r:4,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
+                {r:3,i:"High",d:"We have sensors or automatic alarms that catch it most of the time."},
+                {r:2,i:"High",d:"We have sensors or automatic alarms that catch it most of the time."},
+                {r:1,i:"Certain",d:"The system automatically stops if this happens (Poka-yoke)."}
             ]
         };
 
         const EG = {
-            step: 'Example: Spreader Lift', mode: 'Example: Pin Failure', effects: 'Example: Container Drop', s: '10',
-            causes: 'Example: Wear', o: '2', controls: 'Example: Visual', d: '8',
-            action: 'Install sensor', outcome: 'Sensor active', resS: '10', resO: '1', resD: '1'
+            step: 'Power Supply System (DC)', 
+            mode: 'Short Circuit in cable harness', 
+            effects: 'System shutdown / Potential fire hazard', 
+            s: 9,
+            causes: 'Insulation wear / Moisture ingress', 
+            o: 3, 
+            controls: 'Daily visual check / PM schedule', 
+            d: 4,
+            action: 'Install GFCI circuit breakers', 
+            owner: 'Elec. Team',
+            due: '2025-05-20',
+            status: 'In Progress',
+            outcome: 'GFCI installed & tested', 
+            resS: 9, 
+            resO: 1, 
+            resD: 1
         };
 
         const createActionObj = (text='', owner='', due='', status='Not Started') => ({ id: Date.now()+Math.random(), text, owner, due, status });
@@ -328,8 +346,9 @@
             resS: data.resS || null, resO: data.resO || null, resD: data.resD || null
         });
 
+        // Initialize with empty data so placeholders appear
         window.state = { 
-            metadata: { system: '', id: '', rev: '', date: '', team: '' }, 
+            metadata: { system: '', rev: '', date: '', team: '' }, 
             rows: [createRowObj()], 
             picker: { rowId: null, field: null } 
         };
@@ -358,7 +377,7 @@
                     actionsHTML += `<tr>
                         <td class="text-center font-bold">${aIdx+1}</td>
                         <td><input type="text" class="action-input" value="${act.text}" placeholder="${isFirst?EG.action:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'text', this.value)"></td>
-                        <td><input type="text" class="action-input" value="${act.owner}" oninput="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
+                        <td><input type="text" class="action-input" value="${act.owner}" placeholder="${isFirst?EG.owner:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
                         <td><input type="date" class="action-input" value="${act.due}" onchange="window.updateAction('${row.id}', '${act.id}', 'due', this.value)"></td>
                         <td><select class="action-input" onchange="window.updateAction('${row.id}', '${act.id}', 'status', this.value)"><option ${act.status==='Not Started'?'selected':''}>Not Started</option><option ${act.status==='In Progress'?'selected':''}>In Progress</option><option ${act.status==='Complete'?'selected':''}>Complete</option></select></td>
                     </tr>`;
@@ -367,7 +386,7 @@
                 <button onclick="window.addAction('${row.id}')" class="no-print text-[8px] font-black text-blue-600 p-1 uppercase flex items-center gap-0.5 hover:bg-blue-50 rounded mt-0.5"><i data-lucide="plus" class="w-2 h-2"></i> Add Action</button>`;
 
                 tr.innerHTML = `
-                    <td class="bg-slate-50"><div class="centered-cell font-black text-slate-400 text-xs">${idx + 1}</div></td>
+                    <td class="bg-slate-50"><div class="flex items-center justify-center h-full font-black text-slate-400 text-xs">${idx + 1}</div></td>
                     <td><textarea placeholder="${isFirst?EG.step:''}" oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step}</textarea></td>
                     <td><textarea placeholder="${isFirst?EG.mode:''}" oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode}</textarea></td>
                     <td><textarea placeholder="${isFirst?EG.effects:''}" oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects}</textarea></td>
@@ -388,7 +407,7 @@
                         </div>
                     </td>
                     <td class="bg-blue-100 border-x border-slate-200"><div class="rpn-col bg-transparent">${calculateRPN(row.resS, row.resO, row.resD)}</div></td>
-                    <td class="no-print bg-slate-50"><div class="centered-cell"><button onclick="window.deleteRow('${row.id}')" class="p-1 text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button></div></td>
+                    <td class="no-print bg-slate-50"><div class="flex items-center justify-center h-full"><button onclick="window.deleteRow('${row.id}')" class="p-1 text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button></div></td>
                 `;
                 container.appendChild(tr);
             });
@@ -401,7 +420,7 @@
         window.updateRowVal = (rid, f, v) => { window.state.rows.find(r=>r.id===rid)[f] = v; if(['s','o','d','resS','resO','resD'].includes(f)) window.render(); window.saveToCloud?.(); };
         window.updateAction = (rid, aid, f, v) => { window.state.rows.find(r=>r.id===rid).actions.find(a=>a.id==aid)[f] = v; window.render(); window.saveToCloud?.(); };
         window.updateMeta = () => { 
-            window.state.metadata = { system: document.getElementById('meta-system').value, id: document.getElementById('meta-id').value, rev: document.getElementById('meta-rev').value, date: document.getElementById('meta-date').value, team: document.getElementById('meta-team').value };
+            window.state.metadata = { system: document.getElementById('meta-system').value, rev: document.getElementById('meta-rev').value, date: document.getElementById('meta-date').value, team: document.getElementById('meta-team').value };
             window.saveToCloud?.(); 
         };
 
@@ -420,30 +439,25 @@
             const drawBody = (t, bid) => {
                 const b = document.getElementById(bid); b.innerHTML = '';
                 (SOD_DATA[t] || []).forEach(item => {
-                    const tr = document.createElement('tr'); tr.className = `rating-${item.r} clickable-sod-row`;
+                    const tr = document.createElement('tr'); tr.className = `rating-${item.r} clickable-sod-row transition-all cursor-pointer hover:bg-black/10`;
                     tr.onclick = () => { window.updateRowVal(window.state.picker.rowId, window.state.picker.field, item.r); window.toggleSOD(); };
-                    tr.innerHTML = `<td class="font-black text-center">${item.r}</td><td class="font-bold">${item.i}</td><td>${item.d}</td>`;
+                    tr.innerHTML = `<td class="font-black text-center border-r border-black/10 p-3">${item.r}</td><td class="font-bold border-r border-black/10 px-4">${item.i}</td><td class="px-4 py-2 text-xs">${item.d}</td>`;
                     b.appendChild(tr);
                 });
             };
             drawBody('S','sod-s-body'); drawBody('O','sod-o-body'); drawBody('D','sod-d-body');
         }
 
-        // --- EXPORT & JSON LOGIC ---
         window.downloadJSON = () => {
-            const meta = window.state.metadata;
             const dataStr = JSON.stringify(window.state, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `FMEA_Project_${meta.id || 'Export'}.json`;
+            link.download = `FMEA_Export.json`;
             link.click();
         };
 
-        window.triggerJSONUpload = () => {
-            document.getElementById('json-upload-input').click();
-        };
-
+        window.triggerJSONUpload = () => { document.getElementById('json-upload-input').click(); };
         window.handleJSONUpload = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -453,85 +467,46 @@
                     const imported = JSON.parse(e.target.result);
                     if (imported.rows && imported.metadata) {
                         window.state = imported;
-                        if(window.state.metadata) {
-                            Object.entries(window.state.metadata).forEach(([k,v]) => {
-                                const el = document.getElementById('meta-'+k);
-                                if(el) el.value = v;
-                            });
-                        }
+                        Object.entries(window.state.metadata).forEach(([k,v]) => {
+                            const el = document.getElementById('meta-'+k); if(el) el.value = v;
+                        });
                         window.render();
                         window.saveToCloud?.();
                     }
-                } catch (err) {
-                    console.error('Error parsing JSON file.');
-                }
+                } catch (err) { console.error('Error parsing JSON.'); }
             };
             reader.readAsText(file);
         };
 
         window.downloadDoc = (format) => {
             const meta = window.state.metadata;
-            const styles = `
-                <style>
-                    table { border-collapse: collapse; width: 100%; font-family: Segoe UI, sans-serif; font-size: 8pt; table-layout: fixed; }
-                    th { background-color: #0f172a; color: white; border: 1px solid #334155; padding: 6px; font-weight: bold; text-transform: uppercase; font-size: 7pt; }
-                    td { border: 1px solid #e2e880; padding: 4px; vertical-align: top; word-wrap: break-word; }
-                    .rating-1 { background-color: #93e093; color: #064e3b; text-align: center; font-weight: bold; }
-                    .rating-10 { background-color: #e53e3e; color: #ffffff; text-align: center; font-weight: bold; }
-                    .rpn { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; font-size: 10pt; }
-                </style>`;
-
+            const styles = `<style>
+                table { border-collapse: collapse; width: 100%; font-family: Segoe UI, sans-serif; font-size: 8pt; table-layout: fixed; }
+                th { background-color: #0f172a; color: white; border: 1px solid #334155; padding: 6px; font-weight: bold; text-transform: uppercase; }
+                td { border: 1px solid #e2e880; padding: 4px; vertical-align: top; word-wrap: break-word; }
+                .rpn { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; font-size: 10pt; }
+            </style>`;
             let tableHtml = `<html><head><meta charset="utf-8">${styles}</head><body>`;
-            tableHtml += `<h1>FMEA REPORT: ${meta.system || '-'}</h1><p>ID: ${meta.id || '-'} | Rev: ${meta.rev || '-'} | Date: ${meta.date || '-'}</p>`;
-            tableHtml += `<table><thead><tr><th>#</th><th>Step</th><th>Failure Mode</th><th>Effects</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Action Plan</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
-            
+            tableHtml += `<h1>FMEA REPORT: ${meta.system || '-'}</h1><p>Owner: ${meta.rev} | Date: ${meta.date}</p>`;
+            tableHtml += `<table><thead><tr><th>#</th><th>Step</th><th>Failure Mode</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
             window.state.rows.forEach((r, idx) => {
-                const getRCls = (v) => v ? `rating-${v}` : '';
-                const actionsText = r.actions.map(a => `• ${a.text} (${a.owner || '-'}) [${a.status}]`).join('<br>');
-                const outcomeText = `${r.resultText || '-'}<br>SOD: ${r.resS||'-'}/${r.resO||'-'}/${r.resD||'-'}`;
-                tableHtml += `<tr>
-                    <td style="text-align: center;">${idx+1}</td>
-                    <td>${r.step}</td><td>${r.mode}</td><td>${r.effects}</td>
-                    <td class="${getRCls(r.s)}">${r.s||'-'}</td>
-                    <td>${r.causes}</td>
-                    <td class="${getRCls(r.o)}">${r.o||'-'}</td>
-                    <td>${r.controls}</td>
-                    <td class="${getRCls(r.d)}">${r.d||'-'}</td>
-                    <td class="rpn">${r.s*r.o*r.d||'-'}</td>
-                    <td>${actionsText}</td>
-                    <td>${outcomeText}</td>
-                    <td class="rpn">${r.resS*r.resO*r.resD||'-'}</td>
-                </tr>`;
+                tableHtml += `<tr><td>${idx+1}</td><td>${r.step}</td><td>${r.mode}</td><td>${r.s||'-'}</td><td>${r.causes}</td><td>${r.o||'-'}</td><td>${r.controls}</td><td>${r.d||'-'}</td><td class="rpn">${r.s*r.o*r.d||'-'}</td><td>${r.resultText}</td><td class="rpn">${r.resS*r.resO*r.resD||'-'}</td></tr>`;
             });
             tableHtml += `</tbody></table></body></html>`;
 
             if (format === 'pdf') {
                 const container = document.getElementById('export-wrapper');
-                container.innerHTML = tableHtml;
-                container.style.display = 'block';
-                const opt = {
-                    margin: 8,
-                    filename: `FMEA_Report_${meta.id || 'Export'}.pdf`,
-                    html2canvas: { scale: 1.2 },
-                    jsPDF: { unit: 'mm', format: 'a2', orientation: 'landscape' }
-                };
-                html2pdf().from(container).set(opt).save().then(() => {
-                    container.style.display = 'none';
-                    container.innerHTML = '';
-                });
-                return;
+                container.innerHTML = tableHtml; container.style.display = 'block';
+                html2pdf().from(container).set({ margin: 8, filename: 'FMEA_Report.pdf', jsPDF: { format: 'a2', orientation: 'landscape' } }).save().then(() => { container.style.display = 'none'; });
+            } else {
+                const blob = new Blob([tableHtml], { type: format === 'excel' ? 'application/vnd.ms-excel' : 'application/msword' });
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `FMEA_Report.${format==='excel'?'xls':'doc'}`; link.click();
             }
-
-            const mimeType = format === 'excel' ? 'application/vnd.ms-excel' : 'application/msword';
-            const extension = format === 'excel' ? '.xls' : '.doc';
-            const blob = new Blob([tableHtml], { type: mimeType });
-            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `FMEA_Report_${meta.id || 'Export'}${extension}`; link.click();
         };
 
         window.render();
     </script>
 
-    <!-- Persistence Module -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
@@ -544,8 +519,7 @@
 
         window.saveToCloud = async () => {
             if(!auth.currentUser) return;
-            const dot = document.getElementById('sync-dot');
-            if(dot) dot.classList.add('syncing-dot');
+            const dot = document.getElementById('sync-dot'); if(dot) dot.classList.add('syncing-dot');
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
             if(dot) dot.classList.remove('syncing-dot');
         };
