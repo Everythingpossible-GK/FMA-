@@ -6,6 +6,10 @@
     <title>FMEA Spreadsheet Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- html2pdf for direct PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -70,6 +74,7 @@
         
         textarea:focus { background: #f8fafc; }
         
+        /* Dropdown Menu */
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -98,6 +103,7 @@
         }
         .dropdown-item:hover { background-color: #f8fafc; color: #2563eb; }
 
+        /* Rating Colors */
         .rating-none { background-color: #f1f5f9; color: #cbd5e1; }
         .rating-none .ghost-val { opacity: 0.35; font-weight: 400; }
         .rating-1 { background-color: #93e093; color: #064e3b; }
@@ -133,7 +139,6 @@
         
         .sod-footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-top: 2px; border-top: 1px solid #e2e8f0; padding-top: 2px; }
         
-        .header-box { background-color: #d1e9f6; border: 1px solid #94a3b8; }
         .table-viewport { flex: 1; overflow: auto; width: 100%; background: #cbd5e1; }
 
         #sod-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; backdrop-filter: blur(4px); }
@@ -141,7 +146,14 @@
         .sod-table-ref { width: 100%; border-collapse: collapse; font-size: 14px; }
         .sod-table-ref th { background: #0f172a; color: white; padding: 12px; position: sticky; top: 0; }
         
-        #export-wrapper { display: none; }
+        #export-wrapper { 
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 1600px;
+            background: white;
+            padding: 20px;
+        }
 
         @keyframes pulse-emerald {
             0%, 100% { opacity: 1; }
@@ -156,6 +168,40 @@
             transition: all 0.2s; user-select: none; line-height: 1;
         }
         .small-picker { height: 26px; font-size: 14px; border-radius: 3px; }
+
+        /* Metadata Table Styles */
+        .meta-container {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 10px;
+        }
+        .meta-container th {
+            background-color: #b9e3f3;
+            border: 1px solid #8fc6db;
+            color: #1e293b;
+            text-align: left;
+            padding: 4px 8px;
+            font-weight: 700;
+            width: 25%;
+        }
+        .meta-container td {
+            border: 1px solid #8fc6db;
+            padding: 0;
+            width: 25%;
+        }
+        .meta-container input {
+            width: 100%;
+            padding: 4px 8px;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-weight: 500;
+        }
+        .meta-container textarea {
+            min-height: 30px;
+            padding: 4px 8px;
+        }
     </style>
 </head>
 <body>
@@ -167,8 +213,6 @@
                 <div class="flex flex-col leading-tight">
                     <h1 class="text-base font-black uppercase tracking-tight">FMEA SPREADSHEET PRO</h1>
                     <div class="flex items-center gap-2">
-                        <span class="text-[8px] font-bold text-blue-400 uppercase tracking-widest">Terminal Version</span>
-                        <span class="text-[8px] font-bold text-slate-600">•</span>
                         <a href="https://www.linkedin.com/in/goldenmicheal/" target="_blank" class="flex items-center gap-1 text-[8px] font-semibold text-slate-400 uppercase tracking-wider hover:text-blue-400 transition-colors">
                             GOLDEN KUMAR MICHEAL
                             <i data-lucide="linkedin" class="w-2 h-2 text-[#0077b5]"></i>
@@ -214,26 +258,38 @@
 
         <input type="file" id="json-upload-input" accept=".json" style="display: none;" onchange="window.handleJSONUpload(event)">
 
-        <!-- Metadata Section (No Part Cell) -->
-        <div class="bg-white border-b border-slate-300 p-2 shrink-0 no-print">
-            <div class="grid grid-cols-4 gap-2">
-                <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Equipment Name (e.g., EG-QC)</label>
-                    <input type="text" id="meta-system" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
-                </div>
-                <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Owner Name</label>
-                    <input type="text" id="meta-rev" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
-                </div>
-                <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Study Date</label>
-                    <input type="date" id="meta-date" onchange="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none">
-                </div>
-                <div class="header-box px-2 py-1 rounded">
-                    <label class="block text-[8px] font-black text-slate-500 uppercase tracking-tighter">Team Members</label>
-                    <input type="text" id="meta-team" oninput="window.updateMeta()" class="w-full bg-transparent border-b border-slate-400 text-[11px] font-bold outline-none" placeholder="...">
-                </div>
-            </div>
+        <!-- Enhanced Metadata Header Section -->
+        <div class="no-print bg-slate-100 p-2 shadow-inner shrink-0">
+            <table class="meta-container">
+                <tr>
+                    <th>System / Product / Process</th>
+                    <td><input type="text" id="meta-system" oninput="window.updateMeta()"></td>
+                    <th>FMEA ID</th>
+                    <td><input type="text" id="meta-fmeaId" oninput="window.updateMeta()"></td>
+                </tr>
+                <tr>
+                    <th>Subsystem / Product / Process (if applicable)</th>
+                    <td><input type="text" id="meta-subsystem" oninput="window.updateMeta()"></td>
+                    <th>Revision</th>
+                    <td><input type="text" id="meta-revision" oninput="window.updateMeta()"></td>
+                </tr>
+                <tr>
+                    <th rowspan="2">Team</th>
+                    <td rowspan="2" colspan="1"><textarea id="meta-team" oninput="window.updateMeta()" class="w-full text-xs font-medium bg-transparent focus:outline-none resize-none"></textarea></td>
+                    <th>Party Responsible</th>
+                    <td><input type="text" id="meta-responsible" oninput="window.updateMeta()"></td>
+                </tr>
+                <tr>
+                    <th>Approved By</th>
+                    <td><input type="text" id="meta-approved" oninput="window.updateMeta()"></td>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <td><input type="date" id="meta-date" onchange="window.updateMeta()"></td>
+                    <th>Date Completed</th>
+                    <td><input type="date" id="meta-completed" onchange="window.updateMeta()"></td>
+                </tr>
+            </table>
         </div>
 
         <div class="table-viewport" id="viewport">
@@ -269,52 +325,70 @@
                 <button onclick="window.toggleSOD()" class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="x"></i></button>
             </div>
             <div class="space-y-8">
-                <section id="sod-section-S"><h3 class="font-bold text-red-800 mb-2 underline tracking-widest uppercase text-xs">Severity (S) — "How much does it hurt?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Impact</th><th>Definition</th></tr></thead><tbody id="sod-s-body"></tbody></table></section>
-                <section id="sod-section-O"><h3 class="font-bold text-amber-800 mb-2 underline tracking-widest uppercase text-xs">Occurrence (O) — "How often does it happen?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Frequency</th><th>Definition</th></tr></thead><tbody id="sod-o-body"></tbody></table></section>
-                <section id="sod-section-D"><h3 class="font-bold text-emerald-800 mb-2 underline tracking-widest uppercase text-xs">Detection (D) — "Will we catch it?"</h3><table class="sod-table-ref"><thead><tr><th class="w-16">Score</th><th class="w-32">Detection</th><th>Definition</th></tr></thead><tbody id="sod-d-body"></tbody></table></section>
+                <section id="sod-section-S">
+                    <h3 class="font-bold text-red-800 mb-2 underline tracking-widest uppercase text-xs">Severity (S) — "How much does it hurt?"</h3>
+                    <table class="sod-table-ref">
+                        <thead><tr><th class="w-16">Score</th><th class="w-48 text-left px-4">Impact</th><th class="text-left px-4">Definition</th></tr></thead>
+                        <tbody id="sod-s-body"></tbody>
+                    </table>
+                </section>
+                <section id="sod-section-O">
+                    <h3 class="font-bold text-amber-800 mb-2 underline tracking-widest uppercase text-xs">Occurrence (O) — "How often does it happen?"</h3>
+                    <table class="sod-table-ref">
+                        <thead><tr><th class="w-16">Score</th><th class="w-48 text-left px-4">Frequency</th><th class="text-left px-4">Definition</th></tr></thead>
+                        <tbody id="sod-o-body"></tbody>
+                    </table>
+                </section>
+                <section id="sod-section-D">
+                    <h3 class="font-bold text-emerald-800 mb-2 underline tracking-widest uppercase text-xs">Detection (D) — "Will we catch it?"</h3>
+                    <table class="sod-table-ref">
+                        <thead><tr><th class="w-16">Score</th><th class="w-48 text-left px-4">Detection</th><th class="text-left px-4">Definition</th></tr></thead>
+                        <tbody id="sod-d-body"></tbody>
+                    </table>
+                </section>
             </div>
         </div>
     </div>
 
-    <div id="export-wrapper"></div>
+    <div id="export-wrapper" style="display: none;"></div>
 
     <script>
         const SOD_DATA = {
             S: [
-                {r:10,i:"Danger",d:"Very high risk. Someone could get hurt or you are breaking the law."},
-                {r:9,i:"Danger",d:"Very high risk. Someone could get hurt or you are breaking the law."},
-                {r:8,i:"Major",d:"The machine/part is dead. The customer will be very angry."},
-                {r:7,i:"Major",d:"The machine/part is dead. The customer will be very angry."},
-                {r:6,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
-                {r:5,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
-                {r:4,i:"Moderate",d:"It still works, but not well. Performance is down, or it’s very noisy."},
-                {r:3,i:"Minor",d:"A small nuisance. A slight wrap-up or scratch, but it still functions."},
-                {r:2,i:"Minor",d:"A small nuisance. A slight wrap-up or scratch, but it still functions."},
-                {r:1,i:"None",d:"No one will even notice."}
+                {r:10,i:"Safety/Regulatory",d:"Failure without warning; life-threatening."},
+                {r:9,i:"Safety/Regulatory",d:"Failure with warning; legal non-compliance."},
+                {r:8,i:"Loss of Primary Function",d:"System becomes inoperable. The customer will be very angry."},
+                {r:7,i:"Degradation",d:"Primary function works but at reduced performance."},
+                {r:6,i:"Secondary Function",d:"Loss of non-critical system (e.g., lighting)."},
+                {r:5,i:"Performance Loss",d:"Minor system performance reduction."},
+                {r:4,i:"Minor Nuisance",d:"Non-functional defect noticed by user."},
+                {r:3,i:"Minimal Effect",d:"Slight noise or vibration; fit/finish issue."},
+                {r:2,i:"Very Minor",d:"Noticed only by technicians."},
+                {r:1,i:"No Effect",d:"No discernible impact on performance."}
             ],
             O: [
-                {r:10,i:"Constant",d:"It happens all the time (daily or every few cycles)."},
-                {r:9,i:"Constant",d:"It happens all the time (daily or every few cycles)."},
-                {r:8,i:"Frequent",d:"It happens regularly (once a week or once a month)."},
-                {r:7,i:"Frequent",d:"It happens regularly (once a week or once a month)."},
-                {r:6,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
-                {r:5,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
-                {r:4,i:"Occasional",d:"It happens sometimes, but it isn't 'normal.'"},
-                {r:3,i:"Rare",d:"It has happened before, but very rarely."},
-                {r:2,i:"Rare",d:"It has happened before, but very rarely."},
-                {r:1,i:"Unlikely",d:"It has almost never happened in the history of this part."}
+                {r:10,i:"Extremely High",d:"Failure is certain. No previous design history."},
+                {r:9,i:"Very High",d:"$\\geq 1/10$ units. New technology/material."},
+                {r:8,i:"High",d:"$1/20$ units. Design is at its technical limit."},
+                {r:7,i:"Moderately High",d:"$1/50$ units. Frequent failures in similar parts."},
+                {r:6,i:"Moderate",d:"$1/100$ units. Occasional failures."},
+                {r:5,i:"Moderately Low",d:"$1/500$ units. Proven design in new app."},
+                {r:4,i:"Low",d:"$1/2,000$ units. Minor changes to proven design."},
+                {r:3,i:"Very Low",d:"$1/10,000$ units. Highly robust design."},
+                {r:2,i:"Remote",d:"$1/100,000$ units. Design is over-engineered."},
+                {r:1,i:"Extremely Remote",d:"$< 1/1,000,000$ units. Fail-safe."}
             ],
             D: [
-                {r:10,i:"Impossible",d:"We are 'blind.' There is no way to see the failure until it's too late."},
-                {r:9,i:"Impossible",d:"We are 'blind.' There is no way to see the failure until it's too late."},
-                {r:8,i:"Low",d:"We might catch it if a human is lucky and looks at the right spot."},
-                {r:7,i:"Low",d:"We might catch it if a human is lucky and looks at the right spot."},
-                {r:6,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
-                {r:5,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
-                {r:4,i:"Medium",d:"We have a manual check or a periodic inspection in place."},
-                {r:3,i:"High",d:"We have sensors or automatic alarms that catch it most of the time."},
-                {r:2,i:"High",d:"We have sensors or automatic alarms that catch it most of the time."},
-                {r:1,i:"Certain",d:"The system automatically stops if this happens (Poka-yoke)."}
+                {r:10,i:"Impossible",d:"No testing or analysis exists to catch this."},
+                {r:9,i:"Very Remote",d:"Analysis unlikely to find failure mode."},
+                {r:8,i:"Remote",d:"Low probability that testing will find failure."},
+                {r:7,i:"Very Low",d:"Standard testing has poor effectiveness."},
+                {r:6,i:"Low",d:"Testing is unreliable for this specific mode."},
+                {r:5,i:"Moderate",d:"Lab testing/Simulation is likely to detect."},
+                {r:4,i:"Moderately High",d:"High chance testing will find it."},
+                {r:3,i:"High",d:"Proven validation methods (FEA/Stress tests)."},
+                {r:2,i:"Very High",d:"Certainty of detection before prototyping."},
+                {r:1,i:"Certain",d:"Automatically detected by design rules."}
             ]
         };
 
@@ -346,9 +420,11 @@
             resS: data.resS || null, resO: data.resO || null, resD: data.resD || null
         });
 
-        // Initialize with empty data so placeholders appear
         window.state = { 
-            metadata: { system: '', rev: '', date: '', team: '' }, 
+            metadata: { 
+                system: '', fmeaId: '', revision: '', date: '', 
+                subsystem: '', responsible: '', approved: '', completed: '', team: '' 
+            }, 
             rows: [createRowObj()], 
             picker: { rowId: null, field: null } 
         };
@@ -412,6 +488,7 @@
                 container.appendChild(tr);
             });
             lucide.createIcons();
+            if (window.MathJax) MathJax.typesetPromise();
         };
 
         window.addRow = () => { window.state.rows.push(createRowObj()); window.render(); window.saveToCloud?.(); };
@@ -419,8 +496,19 @@
         window.deleteRow = (rid) => { window.state.rows = window.state.rows.filter(r=>r.id!==rid); if(!window.state.rows.length) window.state.rows=[createRowObj()]; window.render(); window.saveToCloud?.(); };
         window.updateRowVal = (rid, f, v) => { window.state.rows.find(r=>r.id===rid)[f] = v; if(['s','o','d','resS','resO','resD'].includes(f)) window.render(); window.saveToCloud?.(); };
         window.updateAction = (rid, aid, f, v) => { window.state.rows.find(r=>r.id===rid).actions.find(a=>a.id==aid)[f] = v; window.render(); window.saveToCloud?.(); };
+        
         window.updateMeta = () => { 
-            window.state.metadata = { system: document.getElementById('meta-system').value, rev: document.getElementById('meta-rev').value, date: document.getElementById('meta-date').value, team: document.getElementById('meta-team').value };
+            window.state.metadata = { 
+                system: document.getElementById('meta-system').value, 
+                fmeaId: document.getElementById('meta-fmeaId').value, 
+                revision: document.getElementById('meta-revision').value, 
+                date: document.getElementById('meta-date').value, 
+                subsystem: document.getElementById('meta-subsystem').value, 
+                responsible: document.getElementById('meta-responsible').value, 
+                approved: document.getElementById('meta-approved').value, 
+                completed: document.getElementById('meta-completed').value, 
+                team: document.getElementById('meta-team').value 
+            };
             window.saveToCloud?.(); 
         };
 
@@ -446,6 +534,7 @@
                 });
             };
             drawBody('S','sod-s-body'); drawBody('O','sod-o-body'); drawBody('D','sod-d-body');
+            if (window.MathJax) MathJax.typesetPromise();
         }
 
         window.downloadJSON = () => {
@@ -453,8 +542,10 @@
             const blob = new Blob([dataStr], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `FMEA_Export.json`;
+            link.download = `FMEA_Study_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         };
 
         window.triggerJSONUpload = () => { document.getElementById('json-upload-input').click(); };
@@ -483,24 +574,115 @@
             const styles = `<style>
                 table { border-collapse: collapse; width: 100%; font-family: Segoe UI, sans-serif; font-size: 8pt; table-layout: fixed; }
                 th { background-color: #0f172a; color: white; border: 1px solid #334155; padding: 6px; font-weight: bold; text-transform: uppercase; }
-                td { border: 1px solid #e2e880; padding: 4px; vertical-align: top; word-wrap: break-word; }
+                td { border: 1px solid #e2e8f0; padding: 4px; vertical-align: top; word-wrap: break-word; }
                 .rpn { background-color: #f0f9ff; font-weight: 900; text-align: center; color: #0c4a6e; font-size: 10pt; }
+                .meta-tbl { width: 100%; margin-bottom: 20px; border-collapse: collapse; font-family: sans-serif; }
+                .meta-tbl th { background: #b9e3f3; color: #1e293b; border: 1px solid #8fc6db; text-align: left; padding: 4px 8px; font-size: 9px; }
+                .meta-tbl td { border: 1px solid #8fc6db; padding: 4px 8px; font-size: 9px; }
             </style>`;
-            let tableHtml = `<html><head><meta charset="utf-8">${styles}</head><body>`;
-            tableHtml += `<h1>FMEA REPORT: ${meta.system || '-'}</h1><p>Owner: ${meta.rev} | Date: ${meta.date}</p>`;
-            tableHtml += `<table><thead><tr><th>#</th><th>Step</th><th>Failure Mode</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
-            window.state.rows.forEach((r, idx) => {
-                tableHtml += `<tr><td>${idx+1}</td><td>${r.step}</td><td>${r.mode}</td><td>${r.s||'-'}</td><td>${r.causes}</td><td>${r.o||'-'}</td><td>${r.controls}</td><td>${r.d||'-'}</td><td class="rpn">${r.s*r.o*r.d||'-'}</td><td>${r.resultText}</td><td class="rpn">${r.resS*r.resO*r.resD||'-'}</td></tr>`;
-            });
-            tableHtml += `</tbody></table></body></html>`;
 
             if (format === 'pdf') {
                 const container = document.getElementById('export-wrapper');
-                container.innerHTML = tableHtml; container.style.display = 'block';
-                html2pdf().from(container).set({ margin: 8, filename: 'FMEA_Report.pdf', jsPDF: { format: 'a2', orientation: 'landscape' } }).save().then(() => { container.style.display = 'none'; });
+                let tableHtml = `<div>`;
+                tableHtml += `<h1 style="font-family:sans-serif; margin-bottom:10px; font-size:18px;">FMEA ANALYSIS REPORT</h1>`;
+                
+                tableHtml += `<table class="meta-tbl">
+                    <tr><th>System / Product / Process</th><td>${meta.system || '-'}</td><th>FMEA ID</th><td>${meta.fmeaId || '-'}</td></tr>
+                    <tr><th>Subsystem / Product / Process (if applicable)</th><td>${meta.subsystem || '-'}</td><th>Revision</th><td>${meta.revision || '-'}</td></tr>
+                    <tr><th>Team</th><td>${meta.team || '-'}</td><th>Party Responsible</th><td>${meta.responsible || '-'}</td></tr>
+                    <tr><th>Approved By</th><td>${meta.approved || '-'}</td><th>Date Completed</th><td>${meta.completed || '-'}</td></tr>
+                    <tr><th>Date</th><td>${meta.date || '-'}</td><td colspan="2"></td></tr>
+                </table>`;
+
+                tableHtml += `<table style="border-collapse:collapse; width:100%; font-size:10px; table-layout:fixed;">
+                    <thead><tr style="background:#0f172a; color:white;">
+                        <th style="border:1px solid #334; width:30px; padding:4px;">#</th>
+                        <th style="border:1px solid #334; padding:4px;">Step</th>
+                        <th style="border:1px solid #334; padding:4px;">Failure Mode</th>
+                        <th style="border:1px solid #334; width:30px; padding:4px;">S</th>
+                        <th style="border:1px solid #334; padding:4px;">Causes</th>
+                        <th style="border:1px solid #334; width:30px; padding:4px;">O</th>
+                        <th style="border:1px solid #334; padding:4px;">Controls</th>
+                        <th style="border:1px solid #334; width:30px; padding:4px;">D</th>
+                        <th style="border:1px solid #334; width:40px; padding:4px;">RPN</th>
+                        <th style="border:1px solid #334; padding:4px;">Action Plan</th>
+                        <th style="border:1px solid #334; padding:4px;">Outcome</th>
+                    </tr></thead><tbody>`;
+
+                window.state.rows.forEach((r, idx) => {
+                    const actionsText = r.actions.map(a => `• ${a.text} (${a.owner || '-'}) [${a.status}]`).join('<br>');
+                    tableHtml += `<tr style="vertical-align:top;">
+                        <td style="border:1px solid #ccc; text-align:center; padding:4px;">${idx+1}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${r.step}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${r.mode}</td>
+                        <td style="border:1px solid #ccc; text-align:center; padding:4px;">${r.s||'-'}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${r.causes}</td>
+                        <td style="border:1px solid #ccc; text-align:center; padding:4px;">${r.o||'-'}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${r.controls}</td>
+                        <td style="border:1px solid #ccc; text-align:center; padding:4px;">${r.d||'-'}</td>
+                        <td style="border:1px solid #ccc; text-align:center; padding:4px; font-weight:bold;">${r.s*r.o*r.d||'-'}</td>
+                        <td style="border:1px solid #ccc; padding:4px; font-size:9px;">${actionsText}</td>
+                        <td style="border:1px solid #ccc; padding:4px;">${r.resultText}</td>
+                    </tr>`;
+                });
+                tableHtml += `</tbody></table></div>`;
+                
+                container.innerHTML = tableHtml;
+                container.style.display = 'block';
+
+                const opt = {
+                    margin: 10,
+                    filename: `FMEA_Report_${meta.system || 'Study'}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' }
+                };
+
+                html2pdf().from(container).set(opt).save().then(() => {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                });
+            } else if (format === 'csv') {
+                let csv = 'ID,Step,Failure Mode,Severity,Causes,Occurrence,Controls,Detection,RPN,Action Plan,Outcome\n';
+                window.state.rows.forEach((r, idx) => {
+                    const rowArr = [
+                        idx + 1,
+                        `"${(r.step||'').replace(/"/g, '""')}"`,
+                        `"${(r.mode||'').replace(/"/g, '""')}"`,
+                        r.s || '',
+                        `"${(r.causes||'').replace(/"/g, '""')}"`,
+                        r.o || '',
+                        `"${(r.controls||'').replace(/"/g, '""')}"`,
+                        r.d || '',
+                        (r.s * r.o * r.d) || '',
+                        `"${r.actions.map(a => a.text).join('; ')}"`,
+                        `"${(r.resultText||'').replace(/"/g, '""')}"`
+                    ];
+                    csv += rowArr.join(',') + '\n';
+                });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `FMEA_Report_${meta.system || 'Data'}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             } else {
+                let tableHtml = `<html><head><meta charset="utf-8">${styles}</head><body>`;
+                tableHtml += `<h1>FMEA REPORT: ${meta.system || '-'}</h1>`;
+                tableHtml += `<table><thead><tr><th>#</th><th>Step</th><th>Failure Mode</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Action Plan</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
+                window.state.rows.forEach((r, idx) => {
+                    const actionsText = r.actions.map(a => `• ${a.text} (${a.owner || '-'}) [${a.status}]`).join('<br>');
+                    tableHtml += `<tr><td>${idx+1}</td><td>${r.step}</td><td>${r.mode}</td><td>${r.s||'-'}</td><td>${r.causes}</td><td>${r.o||'-'}</td><td>${r.controls}</td><td>${r.d||'-'}</td><td class="rpn">${r.s*r.o*r.d||'-'}</td><td>${actionsText}</td><td>${r.resultText}</td><td class="rpn">${r.resS*r.resO*r.resD||'-'}</td></tr>`;
+                });
+                tableHtml += `</tbody></table></body></html>`;
                 const blob = new Blob([tableHtml], { type: format === 'excel' ? 'application/vnd.ms-excel' : 'application/msword' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `FMEA_Report.${format==='excel'?'xls':'doc'}`; link.click();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `FMEA_Report_${meta.system || 'Study'}.${format === 'excel' ? 'xls' : 'doc'}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
         };
 
