@@ -6,116 +6,30 @@
     <title>FMEA Spreadsheet Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- MathJax for LaTeX rendering - Using secure CDN -->
+    <!-- MathJax for LaTeX rendering -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
-        .app-shell {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        .fmea-table {
-            border-collapse: collapse;
-            background: white;
-            table-layout: fixed;
-            min-width: 2600px;
-        }
-
+        .fmea-table { border-collapse: collapse; background: white; table-layout: fixed; min-width: 2600px; }
         .fmea-table th { 
-            background: #0f172a;
-            color: white;
-            font-weight: 800; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            padding: 6px 4px; 
-            border: 1px solid #334155;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            text-align: center;
+            background: #0f172a; color: white; font-weight: 800; font-size: 10px; text-transform: uppercase; 
+            padding: 6px 4px; border: 1px solid #334155; position: sticky; top: 0; z-index: 50; text-align: center;
         }
-
-        .fmea-table td { 
-            border: 1px solid #e2e8f0; 
-            padding: 0;
-            height: 60px; 
-            vertical-align: top;
-        }
+        .fmea-table td { border: 1px solid #e2e8f0; padding: 0; height: 60px; vertical-align: top; }
         
-        textarea { 
-            width: 100%; 
-            height: 100%; 
-            padding: 4px 6px; 
-            font-size: 11px; 
-            background: transparent; 
-            border: none; 
-            resize: none; 
-            outline: none; 
-            display: block;
-            line-height: 1.3;
-        }
-        
-        /* Ghost Font Class - Hidden during print */
-        .ghost-font {
-            color: #94a3b8 !important;
-            font-style: italic !important;
-            opacity: 0.6 !important;
-            font-weight: 400 !important;
-        }
-
+        textarea { width: 100%; height: 100%; padding: 4px 6px; font-size: 11px; background: transparent; border: none; resize: none; outline: none; display: block; line-height: 1.3; }
+        .ghost-font { color: #94a3b8 !important; font-style: italic !important; opacity: 0.6 !important; font-weight: 400 !important; }
         textarea:focus { background: #f8fafc; }
-        
-        /* Dropdown Menu */
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            width: 180px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            z-index: 200;
-            overflow: hidden;
-        }
 
-        .dropdown-menu.show {
-            display: block;
-            animation: fadeInScale 0.15s ease-out;
-        }
+        .dropdown-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 180px; background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); z-index: 200; overflow: hidden; }
+        .dropdown-menu.show { display: block; animation: fadeInScale 0.15s ease-out; }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .dropdown-item {
-            padding: 0.6rem 1rem;
-            font-size: 10px;
-            font-weight: 700;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
+        .dropdown-item { padding: 0.6rem 1rem; font-size: 10px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
         .dropdown-item:hover { background-color: #f8fafc; color: #2563eb; }
 
         .rating-none { background-color: #f1f5f9; color: #cbd5e1; }
@@ -130,18 +44,7 @@
         .rating-9 { background-color: #f56565; color: #ffffff; }
         .rating-10 { background-color: #e53e3e; color: #ffffff; }
 
-        .rpn-col { 
-            background-color: #f0f9ff; 
-            font-weight: 900; 
-            color: #0c4a6e; 
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
+        .rpn-col { background-color: #f0f9ff; font-weight: 900; color: #0c4a6e; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .results-header { background: #1a5276 !important; color: white !important; }
 
         .action-sub-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -151,84 +54,30 @@
         
         .table-viewport { flex: 1; overflow: auto; width: 100%; background: #cbd5e1; }
 
-        .meta-container {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            font-size: 10px;
-        }
-        .meta-container th {
-            background-color: #b9e3f3;
-            border: 1px solid #8fc6db;
-            color: #1e293b;
-            text-align: left;
-            padding: 4px 8px;
-            font-weight: 700;
-        }
-        .meta-container td {
-            border: 1px solid #8fc6db;
-            padding: 0;
-        }
-        .meta-container input {
-            width: 100%;
-            padding: 4px 8px;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-weight: 500;
-        }
-        .meta-container textarea {
-            min-height: 40px;
-            padding: 4px 8px;
-        }
+        .meta-container { width: 100%; border-collapse: collapse; background: white; font-size: 10px; }
+        .meta-container th { background-color: #b9e3f3; border: 1px solid #8fc6db; color: #1e293b; text-align: left; padding: 4px 8px; font-weight: 700; }
+        .meta-container td { border: 1px solid #8fc6db; padding: 0; }
+        .meta-container input { width: 100%; padding: 4px 8px; border: none; outline: none; background: transparent; font-weight: 500; }
+        .meta-container textarea { min-height: 40px; padding: 4px 8px; }
 
-        .rating-picker {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 18px; cursor: pointer;
-            transition: all 0.2s; user-select: none; line-height: 1;
-        }
+        .rating-picker { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; cursor: pointer; transition: all 0.2s; user-select: none; line-height: 1; }
+
+        /* SOD Modal Styling */
+        #sod-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 9999; backdrop-filter: blur(4px); }
+        .sod-content { background: white; width: 95%; max-width: 1000px; margin: 2% auto; border-radius: 12px; height: 90vh; overflow-y: auto; padding: 20px; }
+        .sod-ref-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .sod-ref-table th { background: #0f172a; color: white; padding: 10px; text-align: left; position: sticky; top: 0; }
+        .sod-ref-table td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; }
 
         @media print {
-            @page {
-                size: A3 landscape;
-                margin: 5mm;
-            }
+            @page { size: A3 landscape; margin: 5mm; }
             .no-print { display: none !important; }
-            body, html { 
-                overflow: visible !important; 
-                height: auto !important; 
-                width: auto !important; 
-                background: white !important; 
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            .app-shell { display: block !important; height: auto !important; width: 100% !important; }
-            .table-viewport { overflow: visible !important; width: 100% !important; height: auto !important; background: transparent !important; }
-            .fmea-table { 
-                min-width: 0 !important; 
-                width: 100% !important; 
-                border: 2px solid #000 !important; 
-                font-size: 7pt !important; 
-                table-layout: auto !important;
-            }
+            body, html { overflow: visible !important; height: auto !important; width: auto !important; background: white !important; }
+            .app-shell { display: block !important; }
+            .table-viewport { overflow: visible !important; width: 100% !important; background: transparent !important; }
+            .fmea-table { min-width: 0 !important; width: 100% !important; border: 2px solid #000 !important; font-size: 7pt !important; table-layout: auto !important; }
             .fmea-table th, .fmea-table td { border: 1px solid #000 !important; color: #000 !important; }
-            .fmea-table th { background-color: #e2e8f0 !important; color: #000 !important; }
-            .meta-container { 
-                width: 100% !important; 
-                border: 2px solid #000 !important; 
-                margin-bottom: 10px; 
-            }
-            .meta-container th { background-color: #b9e3f3 !important; color: #000 !important; border: 1px solid #000 !important; }
-            .meta-container td { border: 1px solid #000 !important; }
-            .rating-picker { background-color: transparent !important; color: #000 !important; border: none !important; }
-            .rpn-col { background-color: #f1f5f9 !important; color: #000 !important; }
-            textarea { height: auto !important; overflow: visible !important; min-height: 20px !important; }
-            
-            /* Hide Example data for empty template during print */
-            .ghost-font {
-                display: none !important;
-            }
+            .ghost-font { display: none !important; }
         }
     </style>
 </head>
@@ -253,12 +102,17 @@
                     <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span id="sync-text">System Active</span>
                 </div>
-                
                 <div class="flex gap-2">
+                    <!-- Restore/Import Hidden Input -->
+                    <input type="file" id="import-json-input" class="hidden" accept=".json" onchange="window.importJSON(this)">
+                    
+                    <button onclick="document.getElementById('import-json-input').click()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
+                        <i data-lucide="upload" class="w-3 h-3"></i> Restore JSON
+                    </button>
+
                     <button onclick="window.downloadJSON()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
                         <i data-lucide="save" class="w-3 h-3"></i> Save JSON
                     </button>
-                    
                     <div class="relative">
                         <button onclick="window.toggleExportMenu(event)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
                             <i data-lucide="download" class="w-3 h-3"></i> Export Data
@@ -270,7 +124,6 @@
                             <div onclick="window.printReport()" class="dropdown-item border-t mt-1"><i data-lucide="printer" class="w-3 h-3 text-blue-600"></i> Print/Save (Native)</div>
                         </div>
                     </div>
-
                     <button onclick="window.addRow()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded font-black text-[9px] uppercase transition-all flex items-center gap-1.5 shadow-lg">
                         <i data-lucide="plus-circle" class="w-3 h-3"></i> Add Analysis Row
                     </button>
@@ -278,29 +131,29 @@
             </div>
         </header>
 
-        <div id="metadata-header-container" class="bg-slate-100 p-2 shadow-inner shrink-0 overflow-x-auto">
-            <table class="meta-container" id="meta-table-ui">
+        <div class="bg-slate-100 p-2 shadow-inner shrink-0 overflow-x-auto">
+            <table class="meta-container">
                 <tr>
                     <th style="width: 30%;">System / Product / Process</th>
-                    <td style="width: 30%;"><input type="text" id="meta-system" placeholder="Enter System Name" oninput="window.updateMeta()"></td>
+                    <td style="width: 30%;"><input type="text" id="meta-system" placeholder="Enter System Name" onblur="window.updateMeta()"></td>
                     <th style="width: 20%;">FMEA ID</th>
-                    <td style="width: 20%;"><input type="text" id="meta-fmeaId" placeholder="ID-001" oninput="window.updateMeta()"></td>
+                    <td style="width: 20%;"><input type="text" id="meta-fmeaId" placeholder="ID-001" onblur="window.updateMeta()"></td>
                 </tr>
                 <tr>
                     <th>Subsystem / Category</th>
-                    <td><input type="text" id="meta-subsystem" placeholder="Enter Category" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-subsystem" placeholder="Enter Category" onblur="window.updateMeta()"></td>
                     <th>Revision Status</th>
-                    <td><input type="text" id="meta-revision" placeholder="Rev 1.0" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-revision" placeholder="Rev 1.0" onblur="window.updateMeta()"></td>
                 </tr>
                 <tr>
                     <th rowspan="2">Team Members</th>
-                    <td rowspan="2"><textarea id="meta-team" placeholder="List team members..." oninput="window.updateMeta()" class="w-full text-xs font-medium bg-transparent focus:outline-none resize-none"></textarea></td>
+                    <td rowspan="2"><textarea id="meta-team" placeholder="List team members..." onblur="window.updateMeta()"></textarea></td>
                     <th>Owner / Responsible</th>
-                    <td><input type="text" id="meta-responsible" placeholder="John Doe" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-responsible" placeholder="John Doe" onblur="window.updateMeta()"></td>
                 </tr>
                 <tr>
                     <th>Approved By</th>
-                    <td><input type="text" id="meta-approved" placeholder="Lead Engineer" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-approved" placeholder="Lead Engineer" onblur="window.updateMeta()"></td>
                 </tr>
                 <tr>
                     <th>Start Date</th>
@@ -312,7 +165,7 @@
         </div>
 
         <div class="table-viewport" id="viewport">
-            <table class="fmea-table" id="main-fmea-table">
+            <table class="fmea-table">
                 <thead>
                     <tr>
                         <th style="width: 40px">#</th>
@@ -336,30 +189,72 @@
         </div>
     </div>
 
+    <!-- SOD Modal -->
+    <div id="sod-modal" onclick="window.closeSOD()">
+        <div class="sod-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <h2 id="modal-title" class="text-xl font-black uppercase">Select Rating</h2>
+                <button onclick="window.closeSOD()" class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="x"></i></button>
+            </div>
+            <table class="sod-ref-table">
+                <thead><tr><th class="w-16">Score</th><th class="w-40">Criteria</th><th>Description</th></tr></thead>
+                <tbody id="sod-options-body"></tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        const EG = {
-            step: 'Power Supply System (DC)', 
-            mode: 'Short Circuit in cable harness', 
-            effects: 'System shutdown / Potential fire hazard', 
-            s: 9, causes: 'Insulation wear / Moisture ingress', 
-            o: 3, controls: 'Daily visual check / PM schedule', d: 4,
-            action: 'Install GFCI circuit breakers', owner: 'Elec. Team', due: '2025-05-20', status: 'In Progress',
-            outcome: 'GFCI installed & tested', resS: 9, resO: 1, resD: 1
+        const SOD_REF = {
+            S: [
+                {v:10, c:"Safety/Regulatory", d:"Failure without warning; life-threatening."},
+                {v:9, c:"Safety/Regulatory", d:"Failure with warning; legal non-compliance."},
+                {v:8, c:"Loss of Primary Function", d:"System becomes inoperable."},
+                {v:7, c:"Degradation", d:"Primary function works but at reduced performance."},
+                {v:6, c:"Secondary Function", d:"Loss of non-critical system (e.g., lighting)."},
+                {v:5, c:"Performance Loss", d:"Minor system performance reduction."},
+                {v:4, c:"Minor Nuisance", d:"Non-functional defect noticed by user."},
+                {v:3, c:"Minimal Effect", d:"Slight noise or vibration; fit/finish issue."},
+                {v:2, c:"Very Minor", d:"Noticed only by technicians."},
+                {v:1, c:"No Effect", d:"No discernible impact on performance."}
+            ],
+            O: [
+                {v:10, c:"Extremely High", d:"Failure is certain. No previous design history."},
+                {v:9, c:"Very High", d:"\\(\\ge 1/10\\) units. New technology/material."},
+                {v:8, c:"High", d:"1/20 units. Design is at its technical limit."},
+                {v:7, c:"Moderately High", d:"1/50 units. Frequent failures in similar parts."},
+                {v:6, c:"Moderate", d:"1/100 units. Occasional failures."},
+                {v:5, c:"Moderately Low", d:"1/500 units. Proven design in new app."},
+                {v:4, c:"Low", d:"1/2,000 units. Minor changes to proven design."},
+                {v:3, c:"Very Low", d:"1/10,000 units. Highly robust design."},
+                {v:2, c:"Remote", d:"1/100,000 units. Design is over-engineered."},
+                {v:1, c:"Extremely Remote", d:"< 1/1,000,000 units. Fail-safe."}
+            ],
+            D: [
+                {v:10, c:"Impossible", d:"No testing or analysis exists to catch this."},
+                {v:9, c:"Very Remote", d:"Analysis unlikely to find failure mode."},
+                {v:8, c:"Remote", d:"Low probability that testing will find failure."},
+                {v:7, c:"Very Low", d:"Standard testing has poor effectiveness."},
+                {v:6, c:"Low", d:"Testing is unreliable for this specific mode."},
+                {v:5, c:"Moderate", d:"Lab testing/Simulation is likely to detect."},
+                {v:4, c:"Moderately High", d:"High chance testing will find it."},
+                {v:3, c:"High", d:"Proven validation methods (FEA/Stress tests)."},
+                {v:2, c:"Very High", d:"Certainty of detection before prototyping."},
+                {v:1, c:"Certain", d:"Automatically detected by design rules."}
+            ]
         };
+
+        const EG = { step: 'Power Supply System (DC)', mode: 'Short Circuit in cable harness', effects: 'System shutdown / Potential fire hazard', s: 9, causes: 'Insulation wear', o: 3, controls: 'Daily visual check', d: 4, action: 'Install GFCI breakers', owner: 'Elec. Team', outcome: 'GFCI installed', resS: 9, resO: 1, resD: 1 };
 
         const createActionObj = (text='', owner='', due='', status='Not Started') => ({ id: Date.now()+Math.random(), text, owner, due, status });
         const createRowObj = (data = {}) => ({
             id: 'row_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            step: data.step || '', mode: data.mode || '', effects: data.effects || '', s: data.s || null, 
+            step: data.step || '', mode: data.mode || '', effects: data.effects || '', s: data.s || null, 
             causes: data.causes || '', o: data.o || null, controls: data.controls || '', d: data.d || null,
-            actions: data.actions || [createActionObj()], resultText: data.resultText || '', resultDate: data.resultDate || '', 
+            actions: data.actions || [createActionObj()], resultText: data.resultText || '', resultDate: data.resultDate || '', 
             resS: data.resS || null, resO: data.resO || null, resD: data.resD || null
         });
 
-        window.state = { 
-            metadata: { system: '', fmeaId: '', revision: '', date: '', subsystem: '', responsible: '', approved: '', completed: '', team: '' }, 
-            rows: [createRowObj()]
-        };
+        window.state = { metadata: {}, rows: [createRowObj()] };
 
         window.render = function() {
             const container = document.getElementById('fmea-body');
@@ -370,23 +265,21 @@
                 const tr = document.createElement('tr');
                 const isFirst = idx === 0;
                 
-                const getRatingPicker = (field, val, isSmall=false, egVal='') => {
+                const getRatingPicker = (field, val, egVal) => {
                     const isGhost = val === null;
                     const display = isGhost ? `<span class="ghost-font">${isFirst ? egVal : '-'}</span>` : val;
                     const ratingClass = isGhost ? 'rating-none' : `rating-${val}`;
-                    return `<div class="rating-picker ${ratingClass}">${display}</div>`;
+                    return `<div class="rating-picker ${ratingClass}" onclick="window.openSOD('${row.id}', '${field}')">${display}</div>`;
                 };
                 
                 const calculateRPN = (s, o, d) => (s && o && d) ? s * o * d : '-';
 
-                let actionsHTML = `<table class="action-sub-table">
-                    <thead><tr><th class="w-6">#</th><th>Action Item</th><th class="w-20">Resp.</th><th class="w-20">Due</th><th class="w-20">Status</th></tr></thead>
-                    <tbody>`;
+                let actionsHTML = `<table class="action-sub-table"><thead><tr><th>#</th><th>Action Item</th><th>Resp.</th><th>Due</th><th>Status</th></tr></thead><tbody>`;
                 row.actions.forEach((act, aIdx) => {
                     actionsHTML += `<tr>
                         <td class="text-center font-bold text-slate-400">${aIdx+1}</td>
-                        <td><input type="text" class="action-input ${isFirst && !act.text ? 'ghost-font' : ''}" value="${act.text}" placeholder="${isFirst?EG.action:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'text', this.value)"></td>
-                        <td><input type="text" class="action-input ${isFirst && !act.owner ? 'ghost-font' : ''}" value="${act.owner}" placeholder="${isFirst?EG.owner:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
+                        <td><input type="text" class="action-input" value="${act.text}" placeholder="${isFirst?EG.action:''}" onblur="window.updateAction('${row.id}', '${act.id}', 'text', this.value)"></td>
+                        <td><input type="text" class="action-input" value="${act.owner}" placeholder="${isFirst?EG.owner:''}" onblur="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
                         <td><input type="date" class="action-input" value="${act.due}" onchange="window.updateAction('${row.id}', '${act.id}', 'due', this.value)"></td>
                         <td><select class="action-input" onchange="window.updateAction('${row.id}', '${act.id}', 'status', this.value)"><option ${act.status==='Not Started'?'selected':''}>Not Started</option><option ${act.status==='In Progress'?'selected':''}>In Progress</option><option ${act.status==='Complete'?'selected':''}>Complete</option></select></td>
                     </tr>`;
@@ -395,23 +288,22 @@
 
                 tr.innerHTML = `
                     <td class="bg-slate-50"><div class="flex items-center justify-center h-full font-black text-slate-400 text-xs">${idx + 1}</div></td>
-                    <td><textarea class="${isFirst && !row.step ? 'ghost-font' : ''}" placeholder="${isFirst?EG.step:''}" oninput="window.updateRowVal('${row.id}', 'step', this.value)">${row.step}</textarea></td>
-                    <td><textarea class="${isFirst && !row.mode ? 'ghost-font' : ''}" placeholder="${isFirst?EG.mode:''}" oninput="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode}</textarea></td>
-                    <td><textarea class="${isFirst && !row.effects ? 'ghost-font' : ''}" placeholder="${isFirst?EG.effects:''}" oninput="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects}</textarea></td>
-                    <td>${getRatingPicker('s', row.s, false, EG.s)}</td>
-                    <td><textarea class="${isFirst && !row.causes ? 'ghost-font' : ''}" placeholder="${isFirst?EG.causes:''}" oninput="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes}</textarea></td>
-                    <td>${getRatingPicker('o', row.o, false, EG.o)}</td>
-                    <td><textarea class="${isFirst && !row.controls ? 'ghost-font' : ''}" placeholder="${isFirst?EG.controls:''}" oninput="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls}</textarea></td>
-                    <td>${getRatingPicker('d', row.d, false, EG.d)}</td>
+                    <td><textarea placeholder="${isFirst?EG.step:''}" onblur="window.updateRowVal('${row.id}', 'step', this.value)">${row.step}</textarea></td>
+                    <td><textarea placeholder="${isFirst?EG.mode:''}" onblur="window.updateRowVal('${row.id}', 'mode', this.value)">${row.mode}</textarea></td>
+                    <td><textarea placeholder="${isFirst?EG.effects:''}" onblur="window.updateRowVal('${row.id}', 'effects', this.value)">${row.effects}</textarea></td>
+                    <td>${getRatingPicker('s', row.s, EG.s)}</td>
+                    <td><textarea placeholder="${isFirst?EG.causes:''}" onblur="window.updateRowVal('${row.id}', 'causes', this.value)">${row.causes}</textarea></td>
+                    <td>${getRatingPicker('o', row.o, EG.o)}</td>
+                    <td><textarea placeholder="${isFirst?EG.controls:''}" onblur="window.updateRowVal('${row.id}', 'controls', this.value)">${row.controls}</textarea></td>
+                    <td>${getRatingPicker('d', row.d, EG.d)}</td>
                     <td class="bg-slate-50 border-x border-slate-200"><div class="rpn-col">${calculateRPN(row.s, row.o, row.d)}</div></td>
                     <td class="p-1">${actionsHTML}</td>
                     <td class="bg-blue-50/10 p-1 flex flex-col h-full">
-                        <textarea class="flex-grow !h-8 border border-slate-200 rounded mb-0.5 bg-white shadow-inner ${isFirst && !row.resultText ? 'ghost-font' : ''}" placeholder="${isFirst?EG.outcome:''}" oninput="window.updateRowVal('${row.id}', 'resultText', this.value)">${row.resultText}</textarea>
-                        <input type="date" class="action-input" value="${row.resultDate}" onchange="window.updateRowVal('${row.id}', 'resultDate', this.value)">
-                        <div class="sod-footer-grid">
-                            ${getRatingPicker('resS', row.resS, true, EG.resS)}
-                            ${getRatingPicker('resO', row.resO, true, EG.resO)}
-                            ${getRatingPicker('resD', row.resD, true, EG.resD)}
+                        <textarea class="flex-grow !h-8 border border-slate-200 rounded mb-0.5 bg-white shadow-inner" placeholder="${isFirst?EG.outcome:''}" onblur="window.updateRowVal('${row.id}', 'resultText', this.value)">${row.resultText}</textarea>
+                        <div class="grid grid-cols-3 gap-0.5 h-7">
+                            ${getRatingPicker('resS', row.resS, EG.resS)}
+                            ${getRatingPicker('resO', row.resO, EG.resO)}
+                            ${getRatingPicker('resD', row.resD, EG.resD)}
                         </div>
                     </td>
                     <td class="bg-blue-100 border-x border-slate-200"><div class="rpn-col bg-transparent">${calculateRPN(row.resS, row.resO, row.resD)}</div></td>
@@ -423,45 +315,116 @@
             if (window.MathJax) MathJax.typesetPromise();
         };
 
+        window.openSOD = (rid, field) => {
+            window.activeSelection = { rid, field };
+            const type = field.toUpperCase().replace('RES', '');
+            document.getElementById('modal-title').innerText = `Select ${type} Rating`;
+            const tbody = document.getElementById('sod-options-body');
+            tbody.innerHTML = '';
+            for(let i=10; i>=1; i--) {
+                const ref = SOD_REF[type]?.find(x => x.v === i) || { c: "Intermediate", d: "Scalable assessment level." };
+                const tr = document.createElement('tr');
+                tr.className = `cursor-pointer hover:bg-slate-100 rating-${i}`;
+                tr.innerHTML = `<td class="text-lg font-black p-4 text-center">${i}</td><td class="font-bold uppercase">${ref.c}</td><td class="text-xs p-2">${ref.d}</td>`;
+                tr.onclick = () => {
+                    const row = window.state.rows.find(r => r.id === rid);
+                    if(row) row[field] = i;
+                    window.closeSOD(); window.render(); window.saveToCloud?.();
+                };
+                tbody.appendChild(tr);
+            }
+            document.getElementById('sod-modal').style.display = 'block';
+            if (window.MathJax) MathJax.typesetPromise();
+        };
+
+        window.closeSOD = () => { document.getElementById('sod-modal').style.display = 'none'; };
         window.addRow = () => { window.state.rows.push(createRowObj()); window.render(); window.saveToCloud?.(); };
         window.deleteRow = (rid) => { window.state.rows = window.state.rows.filter(r=>r.id!==rid); if(!window.state.rows.length) window.state.rows=[createRowObj()]; window.render(); window.saveToCloud?.(); };
-        window.updateRowVal = (rid, f, v) => { window.state.rows.find(r=>r.id===rid)[f] = v; window.render(); window.saveToCloud?.(); };
-        window.updateAction = (rid, aid, f, v) => { window.state.rows.find(r=>r.id===rid).actions.find(a=>a.id==aid)[f] = v; window.render(); window.saveToCloud?.(); };
         
-        window.updateMeta = () => { 
-            window.state.metadata = { 
-                system: document.getElementById('meta-system').value, fmeaId: document.getElementById('meta-fmeaId').value, revision: document.getElementById('meta-revision').value, date: document.getElementById('meta-date').value, 
-                subsystem: document.getElementById('meta-subsystem').value, responsible: document.getElementById('meta-responsible').value, approved: document.getElementById('meta-approved').value, completed: document.getElementById('meta-completed').value, team: document.getElementById('meta-team').value 
+        window.updateRowVal = (rid, f, v) => { 
+            const r = window.state.rows.find(r=>r.id===rid); 
+            if(r && r[f] !== v) { 
+                r[f] = v; 
+                window.render(); 
+                window.saveToCloud?.(); 
+            } 
+        };
+        
+        window.updateAction = (rid, aid, f, v) => { 
+            const r = window.state.rows.find(r=>r.id===rid); 
+            if(r) { 
+                const a = r.actions.find(a=>a.id==aid); 
+                if(a && a[f] !== v) { 
+                    a[f] = v; 
+                    
+                    if (f === 'status' && v === 'Complete' && a.text) {
+                        if (!r.resultText.includes(a.text)) {
+                            r.resultText = r.resultText ? (r.resultText + "; " + a.text) : a.text;
+                        }
+                    }
+                    
+                    window.render(); 
+                    window.saveToCloud?.(); 
+                } 
+            } 
+        };
+        
+        window.updateMeta = () => { 
+            window.state.metadata = { 
+                system: document.getElementById('meta-system').value, 
+                fmeaId: document.getElementById('meta-fmeaId').value, 
+                revision: document.getElementById('meta-revision').value,
+                subsystem: document.getElementById('meta-subsystem').value, 
+                responsible: document.getElementById('meta-responsible').value, 
+                approved: document.getElementById('meta-approved').value,
+                team: document.getElementById('meta-team').value,
+                date: document.getElementById('meta-date').value,
+                completed: document.getElementById('meta-completed').value
             };
-            window.saveToCloud?.(); 
+            window.saveToCloud?.(); 
         };
 
-        function triggerDownload(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => { 
-                document.body.removeChild(a); 
-                URL.revokeObjectURL(url); 
-            }, 100);
-        }
-
-        window.downloadJSON = () => {
-            const dataStr = JSON.stringify(window.state, null, 2);
-            triggerDownload(dataStr, `FMEA_Study_State.json`, 'application/json');
+        window.importJSON = (input) => {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    if (importedState.rows && importedState.metadata) {
+                        window.state = importedState;
+                        // Sync Input Fields
+                        Object.entries(window.state.metadata).forEach(([k,v]) => { 
+                            const el = document.getElementById('meta-'+k); 
+                            if(el) el.value=v; 
+                        });
+                        window.render();
+                        window.saveToCloud?.();
+                        alert("Study Restored Successfully");
+                    } else {
+                        alert("Invalid FMEA JSON file structure.");
+                    }
+                } catch (err) {
+                    alert("Error parsing JSON file.");
+                }
+                input.value = ""; // Reset
+            };
+            reader.readAsText(file);
         };
 
+        window.toggleExportMenu = (e) => { e.stopPropagation(); document.getElementById('export-dropdown').classList.toggle('show'); };
         window.printReport = () => { window.print(); };
+        window.downloadJSON = () => { 
+            const blob = new Blob([JSON.stringify(window.state, null, 2)], { type: 'application/json' }); 
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = `FMEA_${window.state.metadata.system || 'Study'}.json`; 
+            a.click(); 
+        };
 
         window.downloadDoc = (format) => {
             const meta = window.state.metadata;
             const fileName = `FMEA_${(meta.system || 'Report')}_${new Date().toISOString().slice(0,10)}`.replace(/\s+/g, '_');
-
             if (format === 'csv') {
                 let csv = 'ID,Step,Failure Mode,Severity,Causes,Occurrence,Controls,Detection,RPN,Recommended,Outcome,New RPN\n';
                 window.state.rows.forEach((r, idx) => {
@@ -482,11 +445,17 @@
             }
         };
 
-        window.toggleExportMenu = (e) => {
-            e.stopPropagation();
-            const menu = document.getElementById('export-dropdown');
-            menu.classList.toggle('show');
-        };
+        function triggerDownload(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+        }
 
         window.addEventListener('click', () => {
             const menu = document.getElementById('export-dropdown');
@@ -500,36 +469,30 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
+        const config = JSON.parse(__firebase_config);
+        const app = initializeApp(config);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-terminal-v2';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fmea-pro-v3';
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main');
 
         window.saveToCloud = async () => {
             if(!auth.currentUser) return;
-            const dot = document.getElementById('sync-dot'); if(dot) dot.classList.add('syncing-dot');
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), window.state);
-            if(dot) dot.classList.remove('syncing-dot');
+            try { await setDoc(docRef, window.state); } catch (e) { console.error("Sync error:", e); }
         };
-
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-            else await signInAnonymously(auth);
-        };
-        initAuth();
 
         onAuthStateChanged(auth, u => {
-            if(u) onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'state', 'main'), snap => {
-                if(snap.exists()){
-                    window.state = snap.data(); window.render();
-                    if(window.state.metadata) {
-                        Object.entries(window.state.metadata).forEach(([k,v]) => { 
-                            const el = document.getElementById('meta-'+k); if(el) el.value=v; 
-                        });
+            if(!u) { (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) ? signInWithCustomToken(auth, __initial_auth_token) : signInAnonymously(auth); }
+            else {
+                onSnapshot(docRef, snap => {
+                    if(snap.exists()){
+                        window.state = snap.data(); window.render();
+                        if(window.state.metadata) {
+                            Object.entries(window.state.metadata).forEach(([k,v]) => { const el = document.getElementById('meta-'+k); if(el) el.value=v; });
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     </script>
 </body>
