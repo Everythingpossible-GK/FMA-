@@ -81,7 +81,7 @@
 
         textarea:focus { background: #f8fafc; }
         
-        /* Click-based Dropdown Menu */
+        /* Dropdown Menu */
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -193,12 +193,10 @@
             text-align: left;
             padding: 4px 8px;
             font-weight: 700;
-            width: 25%;
         }
         .meta-container td {
             border: 1px solid #8fc6db;
             padding: 0;
-            width: 25%;
         }
         .meta-container input {
             width: 100%;
@@ -209,18 +207,50 @@
             font-weight: 500;
         }
         .meta-container textarea {
-            min-height: 30px;
+            min-height: 40px;
             padding: 4px 8px;
         }
 
         @media print {
+            @page {
+                size: A3 landscape;
+                margin: 5mm;
+            }
             .no-print { display: none !important; }
-            body, html { overflow: visible !important; height: auto !important; width: auto !important; background: white !important; }
-            .app-shell { display: block !important; height: auto !important; width: auto !important; }
-            .table-viewport { overflow: visible !important; width: auto !important; height: auto !important; background: transparent !important; }
-            .fmea-table { min-width: 0 !important; width: 100% !important; border: 2px solid #000 !important; font-size: 8px !important; }
-            .fmea-table th, .fmea-table td { border: 1px solid #000 !important; }
-            textarea { height: auto !important; overflow: visible !important; }
+            body, html { 
+                overflow: visible !important; 
+                height: auto !important; 
+                width: auto !important; 
+                background: white !important; 
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .app-shell { display: block !important; height: auto !important; width: 100% !important; }
+            .table-viewport { overflow: visible !important; width: 100% !important; height: auto !important; background: transparent !important; }
+            .fmea-table { 
+                min-width: 0 !important; 
+                width: 100% !important; 
+                border: 2px solid #000 !important; 
+                font-size: 7pt !important; 
+                table-layout: auto !important;
+            }
+            .fmea-table th, .fmea-table td { border: 1px solid #000 !important; color: #000 !important; }
+            .fmea-table th { background-color: #e2e8f0 !important; color: #000 !important; }
+            .meta-container { 
+                width: 100% !important; 
+                border: 2px solid #000 !important; 
+                margin-bottom: 10px; 
+            }
+            .meta-container th { background-color: #b9e3f3 !important; color: #000 !important; border: 1px solid #000 !important; }
+            .meta-container td { border: 1px solid #000 !important; }
+            .rating-picker { background-color: transparent !important; color: #000 !important; border: none !important; }
+            .rpn-col { background-color: #f1f5f9 !important; color: #000 !important; }
+            textarea { height: auto !important; overflow: visible !important; min-height: 20px !important; }
+            
+            /* Hide Ghost data during print */
+            .ghost-font {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -276,35 +306,37 @@
 
         <input type="file" id="json-upload-input" accept=".json" style="display: none;" onchange="window.handleJSONUpload(event)">
 
-        <div class="no-print bg-slate-100 p-2 shadow-inner shrink-0">
+        <div id="metadata-header-container" class="bg-slate-100 p-2 shadow-inner shrink-0 overflow-x-auto">
             <table class="meta-container">
                 <tr>
-                    <th>System / Product / Process</th>
-                    <td><input type="text" id="meta-system" oninput="window.updateMeta()"></td>
-                    <th>FMEA ID</th>
-                    <td><input type="text" id="meta-fmeaId" oninput="window.updateMeta()"></td>
+                    <th style="width: 40%;">System / Product / Process</th>
+                    <th style="width: 20%;">FMEA ID</th>
+                    <th style="width: 20%;">Revision</th>
+                    <th style="width: 20%;">Date</th>
                 </tr>
                 <tr>
-                    <th>Subsystem / Category</th>
-                    <td><input type="text" id="meta-subsystem" oninput="window.updateMeta()"></td>
-                    <th>Revision Status</th>
-                    <td><input type="text" id="meta-revision" oninput="window.updateMeta()"></td>
-                </tr>
-                <tr>
-                    <th rowspan="2">Team Members</th>
-                    <td rowspan="2" colspan="1"><textarea id="meta-team" oninput="window.updateMeta()" class="w-full text-xs font-medium bg-transparent focus:outline-none resize-none"></textarea></td>
-                    <th>Owner / Responsible</th>
-                    <td><input type="text" id="meta-responsible" oninput="window.updateMeta()"></td>
-                </tr>
-                <tr>
-                    <th>Approved By</th>
-                    <td><input type="text" id="meta-approved" oninput="window.updateMeta()"></td>
-                </tr>
-                <tr>
-                    <th>Start Date</th>
+                    <td><input type="text" id="meta-system" placeholder="Enter System Name" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-fmeaId" placeholder="ID-001" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-revision" placeholder="Rev 1.0" oninput="window.updateMeta()"></td>
                     <td><input type="date" id="meta-date" onchange="window.updateMeta()"></td>
-                    <th>Closure Date</th>
+                </tr>
+                <tr>
+                    <th>Subsystem / Product / Process (if applicable)</th>
+                    <th>Party Responsible</th>
+                    <th>Approved By</th>
+                    <th>Date Completed</th>
+                </tr>
+                <tr>
+                    <td><input type="text" id="meta-subsystem" placeholder="Enter Category" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-responsible" placeholder="John Doe" oninput="window.updateMeta()"></td>
+                    <td><input type="text" id="meta-approved" placeholder="Lead Engineer" oninput="window.updateMeta()"></td>
                     <td><input type="date" id="meta-completed" onchange="window.updateMeta()"></td>
+                </tr>
+                <tr>
+                    <th colspan="4">Team</th>
+                </tr>
+                <tr>
+                    <td colspan="4"><textarea id="meta-team" placeholder="List team members here..." oninput="window.updateMeta()" class="w-full text-xs font-medium bg-transparent focus:outline-none resize-none"></textarea></td>
                 </tr>
             </table>
         </div>
@@ -457,7 +489,7 @@
                     <tbody>`;
                 row.actions.forEach((act, aIdx) => {
                     actionsHTML += `<tr>
-                        <td class="text-center font-bold">${aIdx+1}</td>
+                        <td class="text-center font-bold text-slate-400">${aIdx+1}</td>
                         <td><input type="text" class="action-input ${isFirst && !act.text ? 'ghost-font' : ''}" value="${act.text}" placeholder="${isFirst?EG.action:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'text', this.value)"></td>
                         <td><input type="text" class="action-input ${isFirst && !act.owner ? 'ghost-font' : ''}" value="${act.owner}" placeholder="${isFirst?EG.owner:''}" oninput="window.updateAction('${row.id}', '${act.id}', 'owner', this.value)"></td>
                         <td><input type="date" class="action-input" value="${act.due}" onchange="window.updateAction('${row.id}', '${act.id}', 'due', this.value)"></td>
@@ -555,10 +587,9 @@
             menu.classList.toggle('show');
         };
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', () => {
             const menu = document.getElementById('export-dropdown');
-            if (menu.classList.contains('show')) menu.classList.remove('show');
+            if (menu && menu.classList.contains('show')) menu.classList.remove('show');
         });
 
         function triggerDownload(content, filename, mimeType) {
@@ -597,20 +628,70 @@
             } else if (format === 'pdf') {
                 const container = document.getElementById('export-wrapper');
                 container.style.display = 'block';
-                let html = `<div style="padding:20px; font-family:sans-serif;"><h1>FMEA ANALYSIS: ${meta.system || 'Study'}</h1>`;
-                html += `<table border="1" style="width:100%; border-collapse:collapse; font-size:10px;"><thead><tr style="background:#0f172a; color:white;"><th>#</th><th>Step</th><th>Failure Mode</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Action Plan</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
+                container.innerHTML = '';
+                
+                // Build complete Full-Screen Template for PDF
+                let html = `<div style="padding:40px; font-family:sans-serif;">`;
+                html += `<h1 style="font-size:32px; font-weight:900; color:#0f172a; margin-bottom:20px; text-transform:uppercase;">FMEA ANALYSIS REPORT</h1>`;
+                
+                // Add Metadata Table
+                html += `<table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:12px;">`;
+                html += `<tr><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">System / Process</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.system||'-'}</td><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">FMEA ID</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.fmeaId||'-'}</td></tr>`;
+                html += `<tr><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">Subsystem</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.subsystem||'-'}</td><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">Revision</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.revision||'-'}</td></tr>`;
+                html += `<tr><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">Responsible</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.responsible||'-'}</td><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">Date</th><td style="border:1px solid #8fc6db; padding:10px;">${meta.date||'-'}</td></tr>`;
+                html += `<tr><th style="background:#b9e3f3; border:1px solid #8fc6db; padding:10px; text-align:left;">Team</th><td colspan="3" style="border:1px solid #8fc6db; padding:10px;">${meta.team||'-'}</td></tr>`;
+                html += `</table>`;
+
+                // Add FMEA Analysis Table
+                html += `<table style="width:100%; border-collapse:collapse; font-size:10px;"><thead><tr style="background:#0f172a; color:white;">`;
+                html += `<th style="border:1px solid #334; padding:8px;">#</th><th style="border:1px solid #334; padding:8px;">Step</th><th style="border:1px solid #334; padding:8px;">Failure Mode</th><th style="border:1px solid #334; padding:8px;">S</th><th style="border:1px solid #334; padding:8px;">Causes</th><th style="border:1px solid #334; padding:8px;">O</th><th style="border:1px solid #334; padding:8px;">Controls</th><th style="border:1px solid #334; padding:8px;">D</th><th style="border:1px solid #334; padding:8px;">RPN</th><th style="border:1px solid #334; padding:8px;">Action Plan</th><th style="border:1px solid #334; padding:8px;">Outcome</th><th style="border:1px solid #334; padding:8px;">New RPN</th>`;
+                html += `</tr></thead><tbody>`;
+                
                 window.state.rows.forEach((r, idx) => {
-                    html += `<tr><td style="text-align:center;">${idx+1}</td><td>${r.step}</td><td>${r.mode}</td><td>${r.s||'-'}</td><td>${r.causes}</td><td>${r.o||'-'}</td><td>${r.controls}</td><td>${r.d||'-'}</td><td style="font-weight:bold; background:#f0f9ff;">${r.s*r.o*r.d||'-'}</td><td>${r.actions.map(a=>a.text).join('<br>')}</td><td>${r.resultText}</td><td style="font-weight:bold; background:#f0f9ff;">${r.resS*r.resO*r.resD||'-'}</td></tr>`;
+                    const rpn = (r.s && r.o && r.d) ? r.s * r.o * r.d : '';
+                    const resRpn = (r.resS && r.resO && r.resD) ? r.resS * r.resO * r.resD : '';
+                    const acts = r.actions.filter(a => a.text).map(a => `• ${a.text} (${a.owner || '-'})`).join('<br>');
+                    
+                    // CRITICAL: Filter out ghost data specifically for PDF. If r.step is empty, PDF column is empty.
+                    html += `<tr style="vertical-align:top;">`;
+                    html += `<td style="border:1px solid #ccc; text-align:center; padding:8px;">${idx+1}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${r.step||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${r.mode||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; text-align:center; padding:8px;">${r.s||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${r.causes||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; text-align:center; padding:8px;">${r.o||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${r.controls||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; text-align:center; padding:8px;">${r.d||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; font-weight:bold; background:#f0f9ff; text-align:center; padding:8px;">${rpn}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px; font-size:9px;">${acts}</td>`;
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${r.resultText||''}</td>`;
+                    html += `<td style="border:1px solid #ccc; font-weight:bold; background:#f0f9ff; text-align:center; padding:8px;">${resRpn}</td>`;
+                    html += `</tr>`;
                 });
+                
                 html += `</tbody></table></div>`;
                 container.innerHTML = html;
-                html2pdf().from(container).set({ margin: 10, filename: `${fileName}.pdf`, jsPDF: { format: 'a3', orientation: 'landscape' } }).save().then(() => { container.style.display = 'none'; });
+                
+                const opt = {
+                    margin: 0,
+                    filename: `${fileName}.pdf`,
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' }
+                };
+                
+                html2pdf().from(container).set(opt).save().then(() => { 
+                    container.style.display = 'none'; 
+                    container.innerHTML = '';
+                });
             } else {
                 const type = format === 'excel' ? 'application/vnd.ms-excel' : 'application/msword';
                 let html = `<html><head><meta charset="utf-8"><style>table{border-collapse:collapse; width:100%; font-size:9pt;} th{background:#0f172a; color:white;} td,th{border:1px solid #ccc; padding:4px; vertical-align:top;}</style></head><body>`;
                 html += `<h2>FMEA REPORT: ${meta.system || '-'}</h2><table><thead><tr><th>#</th><th>Step</th><th>Failure Mode</th><th>S</th><th>Causes</th><th>O</th><th>Controls</th><th>D</th><th>RPN</th><th>Outcome</th><th>New RPN</th></tr></thead><tbody>`;
                 window.state.rows.forEach((r, idx) => {
-                    html += `<tr><td>${idx+1}</td><td>${r.step}</td><td>${r.mode}</td><td>${r.s}</td><td>${r.causes}</td><td>${r.o}</td><td>${r.controls}</td><td>${r.d}</td><td>${r.s*r.o*r.d}</td><td>${r.resultText}</td><td>${r.resS*r.resO*r.resD}</td></tr>`;
+                    const rpn = (r.s && r.o && r.d) ? r.s * r.o * r.d : '';
+                    const resRpn = (r.resS && r.resO && r.resD) ? r.resS * r.resO * r.resD : '';
+                    html += `<tr><td>${idx+1}</td><td>${r.step||''}</td><td>${r.mode||''}</td><td>${r.s||''}</td><td>${r.causes||''}</td><td>${r.o||''}</td><td>${r.controls||''}</td><td>${r.d||''}</td><td>${rpn}</td><td>${r.resultText||''}</td><td>${resRpn}</td></tr>`;
                 });
                 html += `</tbody></table></body></html>`;
                 triggerDownload(html, `${fileName}.${format==='excel'?'xls':'doc'}`, type);
@@ -648,7 +729,9 @@
                 if(snap.exists()){
                     window.state = snap.data(); window.render();
                     if(window.state.metadata) {
-                        Object.entries(window.state.metadata).forEach(([k,v]) => { const el = document.getElementById('meta-'+k); if(el) el.value=v; });
+                        Object.entries(window.state.metadata).forEach(([k,v]) => { 
+                            const el = document.getElementById('meta-'+k); if(el) el.value=v; 
+                        });
                     }
                 }
             });
